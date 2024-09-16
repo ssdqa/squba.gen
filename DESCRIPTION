@@ -1,0 +1,32 @@
+Package: ssdqa.gen
+Title: SSDQA Support Functions
+Version: 0.0.0.9000
+Authors@R: 
+    person("Kaleigh", "Wieand", , "wieandk@chop.edu", role = c("aut", "cre"))
+Description: This package contains functions that are used throughout each of the module packages in the SSDQA ecosystem.
+License: Artistic-2.0
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.1
+Imports: 
+    argos,
+    cli,
+    dplyr,
+    ggplot2,
+    ggpubr,
+    grDevices,
+    gt,
+    hotspots,
+    lubridate,
+    magrittr,
+    purrr,
+    scales,
+    srcr,
+    stats,
+    tidyr,
+    timetk,
+    utils
+Remotes: PEDSnet/argos
+Suggests: 
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
