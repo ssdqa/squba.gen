@@ -10,22 +10,23 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.1
 Imports: 
     argos,
-    cli,
-    dplyr,
-    ggplot2,
-    ggpubr,
-    grDevices,
-    gt,
-    hotspots,
-    lubridate,
+    cli (>= 3.6.3),
+    DBI (>= 1.2.3),
+    dplyr (>= 1.1.4),
+    ggplot2 (>= 3.5.0),
+    ggpubr (>= 0.6.0),
+    grDevices (>= 4.4.0),
+    gt (>= 0.11.0),
+    hotspots (>= 1.0.3),
+    lubridate (>= 1.9.3),
     magrittr,
-    purrr,
+    purrr (>= 1.0.2),
     scales,
-    srcr,
-    stats,
-    tidyr,
-    timetk,
-    utils
+    srcr (>= 1.1.0),
+    stats (>= 4.4.0),
+    tidyr (>= 1.3.1),
+    timetk (>= 2.9.0),
+    utils (>= 4.4.0)
 Remotes: PEDSnet/argos
 Suggests: 
     testthat (>= 3.0.0)

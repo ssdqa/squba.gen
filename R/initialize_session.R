@@ -8,6 +8,8 @@
 #' @param is_json a logical to indicate whether db_conn is the path to a json file or not
 #' @param cdm_schema string name of the schema where the data in a CDM format is kept
 #' @param results_schema string name of the schema where results should be output
+#' @param results_tag string to indicate a suffix (if any) that should be appended onto
+#'                    any results tables; defaults to NULL
 #'
 #' @return Argos session will be established in the global environment; this session is
 #'         automatically established as the default
