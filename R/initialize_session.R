@@ -3,11 +3,14 @@
 #' Initialize Argos Session for DQ work
 #'
 #' @param session_name arbitrary string to name the session
-#' @param db_conn either a connection object used to connect to a relational database or the
-#'                path to a json file with the relevant connection information
+#' @param db_conn either a connection object used to connect to a relational database OR the
+#'                path to a json file with the relevant connection information; if the latter,
+#'                is_json should be set to TRUE
 #' @param is_json a logical to indicate whether db_conn is the path to a json file or not
 #' @param cdm_schema string name of the schema where the data in a CDM format is kept
-#' @param results_schema string name of the schema where results should be output
+#' @param results_schema string name of the schema where results should be output if the user chooses
+#'                       to utilize the results_tbl function native to the argos environment;
+#'                       defaults to NULL
 #' @param results_tag string to indicate a suffix (if any) that should be appended onto
 #'                    any results tables; defaults to NULL
 #'
@@ -25,13 +28,14 @@ initialize_dq_session <- function(session_name,
                                   db_conn,
                                   is_json = FALSE,
                                   cdm_schema,
-                                  results_schema,
+                                  results_schema = NULL,
                                   results_tag = NULL){
 
   # Establish session
   argos_session <- argos$new(session_name)
 
   set_argos_default(session = argos_session)
+
 
   # Set standard configs
   if(!is_json){
@@ -42,7 +46,13 @@ initialize_dq_session <- function(session_name,
 
   get_argos_default()$config('cdm_schema', cdm_schema)
   get_argos_default()$config('results_schema', results_schema)
-  get_argos_default()$config('results_name_tag', results_tag)
+  get_argos_default()$config('cache_enabled', FALSE)
+
+  if(is.null(results_tag)){
+    get_argos_default()$config('results_name_tag', '')
+  }else{
+    get_argos_default()$config('results_name_tag', results_tag)
+  }
 
   # Print session information
   db_str <- DBI::dbGetInfo(config('db_src'))
