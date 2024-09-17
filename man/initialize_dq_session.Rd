@@ -9,21 +9,24 @@ initialize_dq_session(
   db_conn,
   is_json = FALSE,
   cdm_schema,
-  results_schema,
+  results_schema = NULL,
   results_tag = NULL
 )
 }
 \arguments{
 \item{session_name}{arbitrary string to name the session}
 
-\item{db_conn}{either a connection object used to connect to a relational database or the
-path to a json file with the relevant connection information}
+\item{db_conn}{either a connection object used to connect to a relational database OR the
+path to a json file with the relevant connection information; if the latter,
+is_json should be set to TRUE}
 
 \item{is_json}{a logical to indicate whether db_conn is the path to a json file or not}
 
 \item{cdm_schema}{string name of the schema where the data in a CDM format is kept}
 
-\item{results_schema}{string name of the schema where results should be output}
+\item{results_schema}{string name of the schema where results should be output if the user chooses
+to utilize the results_tbl function native to the argos environment;
+defaults to NULL}
 
 \item{results_tag}{string to indicate a suffix (if any) that should be appended onto
 any results tables; defaults to NULL}
