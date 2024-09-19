@@ -7,7 +7,7 @@
 #'                path to a json file with the relevant connection information; if the latter,
 #'                is_json should be set to TRUE
 #' @param working_directory the base directory in which the analysis is taking place; defaults to the output of getwd()
-#' @param file_directory the subdirectory within the working directory where all files to be used in the analysis
+#' @param file_subdirectory the subdirectory within the working directory where all files to be used in the analysis
 #'                       (i.e. concept sets) are kept. this sets a default file location so the functions can easily
 #'                       read in relevant files without having to redefine the path
 #' @param is_json a logical to indicate whether db_conn is the path to a json file or not
@@ -32,7 +32,7 @@
 initialize_dq_session <- function(session_name,
                                   db_conn,
                                   working_directory = getwd(),
-                                  file_directory,
+                                  file_subdirectory,
                                   is_json = FALSE,
                                   cdm_schema,
                                   results_schema = NULL,

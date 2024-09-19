@@ -8,7 +8,7 @@ initialize_dq_session(
   session_name,
   db_conn,
   working_directory = getwd(),
-  file_directory,
+  file_subdirectory,
   is_json = FALSE,
   cdm_schema,
   results_schema = NULL,
@@ -24,7 +24,7 @@ is_json should be set to TRUE}
 
 \item{working_directory}{the base directory in which the analysis is taking place; defaults to the output of getwd()}
 
-\item{file_directory}{the subdirectory within the working directory where all files to be used in the analysis
+\item{file_subdirectory}{the subdirectory within the working directory where all files to be used in the analysis
 (i.e. concept sets) are kept. this sets a default file location so the functions can easily
 read in relevant files without having to redefine the path}
 
