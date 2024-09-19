@@ -38,12 +38,13 @@ join_to_vocabulary <- function(tbl,
 #'            able to be vectorized (i.e. a CDM tbl, codeset, etc) will not appear in the final
 #'            summary
 #'
-#' @return paramater_summary.csv to the results directory
 #' @return output_type string to be piped into a descriptive message at the end of the core function
 #'         to inform users what should be used as the `output_function` argument in the output
 #'         function
 #'
-param_csv_summ2 <- function(check_string, ...){
+#' @export
+#'
+param_summ <- function(check_string, ...){
 
   argg <- c(...)
 
@@ -61,11 +62,11 @@ param_csv_summ2 <- function(check_string, ...){
 
   output_type <- paste0(check_string, '_', site_type, '_', exp_anom, '_', time)
 
-  df_final <- df %>%
-    add_row(param = 'output_function',
-            value = output_type)
+  # df_final <- df %>%
+  #   add_row(param = 'output_function',
+  #           value = output_type)
 
-  output_tbl(df_final, 'parameter_summary', file = TRUE)
+  #output_tbl(df_final, 'parameter_summary', file = TRUE)
 
   return(output_type)
 
