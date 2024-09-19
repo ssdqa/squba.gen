@@ -6,6 +6,10 @@
 #' @param db_conn either a connection object used to connect to a relational database OR the
 #'                path to a json file with the relevant connection information; if the latter,
 #'                is_json should be set to TRUE
+#' @param working_directory the base directory in which the analysis is taking place; defaults to the output of getwd()
+#' @param file_directory the subdirectory within the working directory where all files to be used in the analysis
+#'                       (i.e. concept sets) are kept. this sets a default file location so the functions can easily
+#'                       read in relevant files without having to redefine the path
 #' @param is_json a logical to indicate whether db_conn is the path to a json file or not
 #' @param cdm_schema string name of the schema where the data in a CDM format is kept
 #' @param results_schema string name of the schema where results should be output if the user chooses
@@ -22,10 +26,13 @@
 #'
 #' @import srcr
 #' @importFrom DBI dbGetInfo
+#' @importFrom stringr str_remove
 #' @export
 #'
 initialize_dq_session <- function(session_name,
                                   db_conn,
+                                  working_directory = getwd(),
+                                  file_directory,
                                   is_json = FALSE,
                                   cdm_schema,
                                   results_schema = NULL,
@@ -47,12 +54,22 @@ initialize_dq_session <- function(session_name,
   get_argos_default()$config('cdm_schema', cdm_schema)
   get_argos_default()$config('results_schema', results_schema)
   get_argos_default()$config('cache_enabled', FALSE)
+  get_argos_default()$config('retain_intermediates', FALSE)
+  get_argos_default()$config('db_trace', TRUE)
 
   if(is.null(results_tag)){
     get_argos_default()$config('results_name_tag', '')
   }else{
     get_argos_default()$config('results_name_tag', results_tag)
   }
+
+  # Set working directory
+  get_argos_default()$config('base_dir', working_directory)
+
+  # Set specs directory
+  ## Drop path to working directory if present
+  drop_wd <- str_remove(file_directory, working_directory)
+  get_argos_default()$config('subdirs', list(spec_dir = drop_wd))
 
   # Print session information
   db_str <- DBI::dbGetInfo(config('db_src'))
