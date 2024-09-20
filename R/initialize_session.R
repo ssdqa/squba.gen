@@ -7,19 +7,20 @@
 #'                path to a json file with the relevant connection information; if the latter,
 #'                is_json should be set to TRUE
 #' @param working_directory the base directory in which the analysis is taking place; defaults to the output of getwd()
-#' @param file_subdirectory the subdirectory within the working directory where all files to be used in the analysis
+#' @param file_subdirectory the *subdirectory* within the working directory where all files to be used in the analysis
 #'                       (i.e. concept sets) are kept. this sets a default file location so the functions can easily
 #'                       read in relevant files without having to redefine the path
 #' @param is_json a logical to indicate whether db_conn is the path to a json file or not
 #' @param cdm_schema string name of the schema where the data in a CDM format is kept
 #' @param results_schema string name of the schema where results should be output if the user chooses
-#'                       to utilize the results_tbl function native to the argos environment;
+#'                       to utilize the `results_tbl` function native to the argos environment;
 #'                       defaults to NULL
 #' @param results_tag string to indicate a suffix (if any) that should be appended onto
 #'                    any results tables; defaults to NULL
 #'
-#' @return Argos session will be established in the global environment; this session is
-#'         automatically established as the default
+#' @return Argos session will be established in the environment; this session is
+#'         automatically established as the default that will appear when `get_argos_default`
+#'         is called
 #'
 #'         Function will print the database connection information and session
 #'         information in the console for user review
@@ -68,7 +69,7 @@ initialize_dq_session <- function(session_name,
 
   # Set specs directory
   ## Drop path to working directory if present
-  drop_wd <- str_remove(file_directory, working_directory)
+  drop_wd <- str_remove(file_subdirectory, working_directory)
   get_argos_default()$config('subdirs', list(spec_dir = drop_wd))
 
   # Print session information

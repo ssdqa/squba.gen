@@ -24,7 +24,7 @@ is_json should be set to TRUE}
 
 \item{working_directory}{the base directory in which the analysis is taking place; defaults to the output of getwd()}
 
-\item{file_subdirectory}{the subdirectory within the working directory where all files to be used in the analysis
+\item{file_subdirectory}{the \emph{subdirectory} within the working directory where all files to be used in the analysis
 (i.e. concept sets) are kept. this sets a default file location so the functions can easily
 read in relevant files without having to redefine the path}
 
@@ -33,15 +33,16 @@ read in relevant files without having to redefine the path}
 \item{cdm_schema}{string name of the schema where the data in a CDM format is kept}
 
 \item{results_schema}{string name of the schema where results should be output if the user chooses
-to utilize the results_tbl function native to the argos environment;
+to utilize the \code{results_tbl} function native to the argos environment;
 defaults to NULL}
 
 \item{results_tag}{string to indicate a suffix (if any) that should be appended onto
 any results tables; defaults to NULL}
 }
 \value{
-Argos session will be established in the global environment; this session is
-automatically established as the default
+Argos session will be established in the environment; this session is
+automatically established as the default that will appear when \code{get_argos_default}
+is called
 
 \if{html}{\out{<div class="sourceCode">}}\preformatted{    Function will print the database connection information and session
     information in the console for user review
