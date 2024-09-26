@@ -132,3 +132,38 @@ generate_ref_table <- function(tbl,
   return(t)
 
 }
+
+
+#' Make ggplot2 graphical output interactive
+#'
+#' @param ggplot_obj a ggplot object output by any of the `*_output` functions native
+#'                   to each module
+#'
+#' @return the same graph with interactive functionality and pre-set tooltips
+#'         based either in the `ggiraph` package or the `plotly` package
+#'
+#' @importFrom ggiraph girafe
+#' @importFrom plotly ggplotly
+#'
+#' @export
+#'
+make_interactive_ssdqa <- function(ggplot_obj){
+
+  grph_meta <- ggplot_obj[['metadata']]
+
+  if(grph_meta$pkg_backend == 'ggiraph'){
+
+    int_grph <- girafe(ggobj = ggplot_obj)
+
+  }else if(grph_meta$pkg_backend == 'plotly'){
+
+    if(grph_meta$tooltip){
+      int_grph <- ggplotly(p = ggplot_obj, tooltip = "text")
+    }else{
+      int_grph <- ggplotly(p = ggplot_obj)
+    }
+  }
+
+  return(int_grph)
+
+}
