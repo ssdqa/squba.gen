@@ -37,6 +37,7 @@ initialize_dq_session <- function(session_name,
                                   is_json = FALSE,
                                   cdm_schema,
                                   results_schema = NULL,
+                                  vocabulary_schema = NULL,
                                   results_tag = NULL){
 
   # Establish session
@@ -53,6 +54,7 @@ initialize_dq_session <- function(session_name,
 
   get_argos_default()$config('cdm_schema', cdm_schema)
   get_argos_default()$config('results_schema', results_schema)
+  get_argos_default()$config('vocabulary_schema', vocabulary_schema)
   get_argos_default()$config('cache_enabled', FALSE)
   get_argos_default()$config('retain_intermediates', FALSE)
   get_argos_default()$config('db_trace', TRUE)
