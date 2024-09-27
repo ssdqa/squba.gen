@@ -56,6 +56,9 @@ initialize_dq_session <- function(session_name,
   get_argos_default()$config('cache_enabled', FALSE)
   get_argos_default()$config('retain_intermediates', FALSE)
   get_argos_default()$config('db_trace', TRUE)
+  get_argos_default()$config('can_explain',
+                             !is.na(tryCatch(db_explain(config('db_src'), 'select 1 = 1'),
+                                             error = function(e) NA)))
 
   if(is.null(results_tag)){
     get_argos_default()$config('results_name_tag', '')
