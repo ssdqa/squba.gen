@@ -45,7 +45,9 @@ initialize_dq_session <- function(session_name,
   # Establish session
   argos_session <- argos$new(session_name)
 
-  assign(session_name, argos_session, envir = .GlobalEnv)
+  set_argos_default(argos_session)
+
+  #assign(session_name, argos_session, envir = .GlobalEnv)
 
   # Set standard configs
   if(!is_json){
