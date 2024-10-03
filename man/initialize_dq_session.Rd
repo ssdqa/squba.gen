@@ -12,6 +12,7 @@ initialize_dq_session(
   is_json = FALSE,
   cdm_schema,
   results_schema = NULL,
+  vocabulary_schema = NULL,
   results_tag = NULL
 )
 }
@@ -35,6 +36,9 @@ read in relevant files without having to redefine the path}
 \item{results_schema}{string name of the schema where results should be output if the user chooses
 to utilize the \code{results_tbl} function native to the argos environment;
 defaults to NULL}
+
+\item{vocabulary_schema}{string name of the schema where vocabulary tables (i.e. concept) are
+stored on the database}
 
 \item{results_tag}{string to indicate a suffix (if any) that should be appended onto
 any results tables; defaults to NULL}

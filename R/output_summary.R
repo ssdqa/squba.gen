@@ -116,7 +116,7 @@ generate_ref_table <- function(tbl,
     t <- tbl %>%
       rename('denom_col' = denom) %>%
       distinct(site, !!sym(id_col), !!sym(name_col), denom_col) %>%
-      group_by(site, !!sym(id_col)) %>%
+      group_by(site, !!sym(id_col), !!sym(name_col)) %>%
       mutate(denom_col = sum(denom_col)) %>%
       ungroup() %>%
       distinct() %>%
@@ -151,19 +151,23 @@ make_interactive_ssdqa <- function(ggplot_obj){
 
   grph_meta <- ggplot_obj[['metadata']]
 
-  if(grph_meta$pkg_backend == 'ggiraph'){
+  if(!is.null(grph_meta)){
 
-    int_grph <- girafe(ggobj = ggplot_obj)
+    if(grph_meta$pkg_backend == 'ggiraph'){
 
-  }else if(grph_meta$pkg_backend == 'plotly'){
+      int_grph <- girafe(ggobj = ggplot_obj)
 
-    if(grph_meta$tooltip){
-      int_grph <- ggplotly(p = ggplot_obj, tooltip = "text")
-    }else{
-      int_grph <- ggplotly(p = ggplot_obj)
+    }else if(grph_meta$pkg_backend == 'plotly'){
+
+      if(grph_meta$tooltip){
+        int_grph <- ggplotly(p = ggplot_obj, tooltip = "text")
+      }else{
+        int_grph <- ggplotly(p = ggplot_obj)
+      }
     }
-  }
 
-  return(int_grph)
+    return(int_grph)
+
+  }else{cli::cli_alert_warning("No interactive functionality is available for this graph")}
 
 }

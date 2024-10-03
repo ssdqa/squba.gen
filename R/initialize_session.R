@@ -17,6 +17,8 @@
 #'                       defaults to NULL
 #' @param results_tag string to indicate a suffix (if any) that should be appended onto
 #'                    any results tables; defaults to NULL
+#' @param vocabulary_schema string name of the schema where vocabulary tables (i.e. concept) are
+#'                          stored on the database
 #'
 #' @return Argos session will be established in the environment; this session is
 #'         automatically established as the default that will appear when `get_argos_default`
