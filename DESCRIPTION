@@ -4,7 +4,7 @@ Version: 0.0.0.9000
 Authors@R: 
     person("Kaleigh", "Wieand", , "wieandk@chop.edu", role = c("aut", "cre"))
 Description: This package contains functions that are used throughout each of the module packages in the SSDQA ecosystem.
-License: Artistic-2.0
+License: MPL-2.0
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.1
