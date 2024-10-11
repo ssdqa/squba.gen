@@ -59,6 +59,45 @@ cohort_codeset_label_pcnt <- function(cohort_tbl,
 
 }
 
+#' Function to get sql code for number of days between date1 and date2.
+#' Adapted for sql dialects for Postgres and MS SQL.
+#'
+#' Should always be wrapped by sql()
+#' @param date_col_1 Date col 1
+#' @param date_col_2 Date col 2
+#' @param db connection type object. Defaulted to config('db_src') for standard framework
+#' Functionality added for Postgres, MS SQL and Snowflake
+#'
+#' @return an integer representing the difference (in days) between the two provided
+#' dates
+#'
+#' @examples
+#' data %>% mutate(date_diff = sql(calc_days_between_dates(date_1, date2)))
+calc_days_between_dates <-
+  function(date_col_1, date_col_2, db = config("db_src")) {
+    if (class(db) == "Microsoft SQL Server") {
+      sql_code <-
+        paste0("DATEDIFF(day, ", date_col_1, ", ", date_col_2, ")")
+    } else if (class(db) == "PqConnection") {
+      sql_code <-
+        paste0(date_col_2, " - ", date_col_1)
+    } else if (class(db) == "Snowflake") {
+      sql_code <-
+        paste0(
+          "DATEDIFF(day, ",
+          '"',
+          date_col_1,
+          '"',
+          ",",
+          '"',
+          date_col_2,
+          '"',
+          ")"
+        )
+    }
+    return(sql_code)
+  }
+
 
 #' Prepare cohort for check execution
 #' requirement: fields must have columns:
