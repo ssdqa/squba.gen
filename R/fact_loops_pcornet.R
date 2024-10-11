@@ -57,7 +57,7 @@ loop_through_visits_pcnt <- function(cohort_tbl,
       visit_types <-
         visit_type_tbl %>%
         filter(visit_type %in% c(visit_list[[j]])) %>%
-        select(visit_concept_id) %>% pull()
+        select(enc_type) %>% pull()
 
       # narrows the visit time to cohort_entry and end date
       visits <-
