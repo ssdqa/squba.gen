@@ -17,10 +17,9 @@ join_to_vocabulary <- function(tbl,
                                col,
                                vocab_col = 'concept_id'){
   if(!is.null(vocab_tbl)){
-
     final <- select(vocab_tbl, vocab_col, concept_name, vocabulary_id) %>%
       rename('join_col' = vocab_col) %>%
-      right_join(tbl %>% rename('join_col' = col), by = c('join_col'),
+      right_join(tbl %>% rename('join_col' = col),
                  copy = TRUE) %>%
       rename_with(~col, join_col) %>%
       collect()
