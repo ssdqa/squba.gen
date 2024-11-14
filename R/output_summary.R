@@ -163,6 +163,11 @@ make_interactive_ssdqa <- function(ggplot_obj){
       }else{
         int_grph <- ggplotly(p = ggplot_obj)
       }
+    }else if(grph_meta$pkg_backend == 'plotly_ssc'){
+
+      ggplot_obj_edit <- ggplot_obj + guides(shape = 'none')
+
+      int_grph <- ggplotly(p = ggplot_obj_edit, tooltip = 'text')
     }
 
     return(int_grph)
