@@ -145,9 +145,9 @@ prepare_cohort_pcnt <- function(cohort_tbl,
   if(!is.data.frame(age_groups)){
     final_age <- stnd
   }else{
-    final_age <- compute_age_groups(cohort_tbl = stnd,
-                                    person_tbl = cdm_tbl('demographic'),
-                                    age_groups = age_groups)}
+    final_age <- compute_age_groups_pcnt(cohort_tbl = stnd,
+                                         person_tbl = cdm_tbl('demographic'),
+                                         age_groups = age_groups)}
 
   if(!is.data.frame(codeset)){
     final_cdst <- stnd

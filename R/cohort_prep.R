@@ -17,7 +17,8 @@ compute_age_groups <- function(cohort_tbl,
     inner_join(select(person_tbl,
                       person_id,
                       birth_date)) %>%
-    mutate(age_ce = floor((start_date - birth_date)/365.25)) %>%
+    mutate(age_diff = sql(calc_days_between_dates(date_col_1 = 'birth_date', date_col_2 = 'start_date')),
+           age_ce = floor(age_diff/365.25)) %>%
     collect_new()
 
   cohorts_grpd <- cohorts %>%
@@ -99,7 +100,8 @@ prepare_cohort <- function(cohort_tbl,
 
   stnd <-
     ct %>%
-    mutate(fu = as.numeric(round((end_date - start_date + 1)/365.25,3))) #%>%
+    mutate(fu_diff = sql(calc_days_between_dates(date_col_1 = 'start_date', date_col_2 = 'end_date')),
+           fu = round(fu_diff/365.25,3)) #%>%
   #select(site, person_id, start_date, end_date, fu) #%>%
   #add_site()
 
