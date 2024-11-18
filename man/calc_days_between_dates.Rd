@@ -22,6 +22,3 @@ dates
 \description{
 Should always be wrapped by sql()
 }
-\examples{
-data \%>\% mutate(date_diff = sql(calc_days_between_dates(date_1, date2)))
-}

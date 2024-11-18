@@ -71,17 +71,15 @@ cohort_codeset_label_pcnt <- function(cohort_tbl,
 #' @return an integer representing the difference (in days) between the two provided
 #' dates
 #'
-#' @examples
-#' data %>% mutate(date_diff = sql(calc_days_between_dates(date_1, date2)))
 calc_days_between_dates <-
   function(date_col_1, date_col_2, db = config("db_src")) {
-    if (class(db) == "Microsoft SQL Server") {
+    if (class(db) %in% "Microsoft SQL Server") {
       sql_code <-
         paste0("DATEDIFF(day, ", date_col_1, ", ", date_col_2, ")")
-    } else if (class(db) == "PqConnection") {
+    } else if (class(db) %in% "PqConnection") {
       sql_code <-
         paste0(date_col_2, " - ", date_col_1)
-    } else if (class(db) == "Snowflake") {
+    } else if (class(db) %in% "Snowflake") {
       sql_code <-
         paste0(
           "DATEDIFF(day, ",
@@ -94,6 +92,9 @@ calc_days_between_dates <-
           '"',
           ")"
         )
+    }else if(class(db) %in% 'SQLiteConnection'){
+      sql_code <-
+        paste0("julianday(", date_col_2, ") - julianday(", date_col_1, ")")
     }
     return(sql_code)
   }
