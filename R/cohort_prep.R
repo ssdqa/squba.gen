@@ -13,13 +13,13 @@ compute_age_groups <- function(cohort_tbl,
                                person_tbl,
                                age_groups) {
 
-  cohorts <- cohort_tbl %>%
-    inner_join(select(person_tbl,
-                      person_id,
-                      birth_date)) %>%
-    mutate(age_diff = sql(calc_days_between_dates(date_col_1 = 'birth_date', date_col_2 = 'start_date')),
+  new_person <- build_birth_date(cohort = cohort_tbl,
+                                 person_tbl = person_tbl)
+
+  cohorts <- new_person %>%
+    mutate(age_diff = as.numeric(start_date - birth_date),
            age_ce = floor(age_diff/365.25)) %>%
-    collect_new()
+    collect()
 
   cohorts_grpd <- cohorts %>%
     cross_join(age_groups) %>%
@@ -110,7 +110,9 @@ prepare_cohort <- function(cohort_tbl,
   }else{
     final_age <- compute_age_groups(cohort_tbl = stnd,
                                     person_tbl = cdm_tbl('person'),
-                                    age_groups = age_groups)}
+                                    age_groups = age_groups)
+
+    }
 
   if(!is.data.frame(codeset)){
     final_cdst <- stnd
@@ -126,3 +128,31 @@ prepare_cohort <- function(cohort_tbl,
   return(final)
 
 }
+
+
+#' Build birth date column
+#'
+#' @param cohort table with cohort members; must at least have person_id
+#' @param person_tbl CDM person table; must at least have person_id, year_of_birth,
+#' month_of_birth, and day_of_birth
+#'
+#' @return a table with a new birth_date column that is a combination of year, month, and
+#' day of birth; improves ability to compute ages
+#'
+#' @importFrom lubridate make_date
+#' @export
+#'
+build_birth_date <- function(cohort,
+                             person_tbl){
+
+  person_tbl %>%
+    select(person_id, year_of_birth, month_of_birth, day_of_birth) %>%
+    inner_join(cohort) %>%
+    collect() %>%
+    mutate(month_of_birth = ifelse(is.na(month_of_birth), 1, month_of_birth),
+           day_of_birth = ifelse(is.na(day_of_birth), 1, day_of_birth)) %>%
+    mutate(birth_date = lubridate::make_date(year = year_of_birth, month = month_of_birth,
+                                             day = day_of_birth))
+
+}
+
