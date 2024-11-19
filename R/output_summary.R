@@ -115,7 +115,7 @@ generate_ref_table <- function(tbl,
     t <- tbl %>%
       rename('denom_col' = denom) %>%
       distinct(site, time_start, !!sym(id_col), !!sym(name_col), denom_col) %>%
-      group_by(site, !!sym(id_col), !!sym(name_col)) %>%
+      group_by(across(-c(denom_col, time_start))) %>%
       summarise(denom_col = sum(denom_col)) %>%
       ungroup() %>%
       distinct() %>%
