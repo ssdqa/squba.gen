@@ -57,7 +57,7 @@ param_summ <- function(check_string, ...){
   exp_anom <- df %>% filter(param == 'anomaly_or_exploratory') %>%
     mutate(v = ifelse(value == 'anomaly', 'anom', 'exp')) %>% distinct(v) %>% pull()
   time <- df %>% filter(param == 'time') %>%
-    mutate(v = ifelse(value == TRUE, 'at', 'nt')) %>% distinct(v) %>% pull()
+    mutate(v = ifelse(value == TRUE, 'la', 'cs')) %>% distinct(v) %>% pull()
 
   output_type <- paste0(check_string, '_', site_type, '_', exp_anom, '_', time)
 
