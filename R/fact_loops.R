@@ -144,30 +144,58 @@ loop_through_visits <- function(cohort_tbl,
       # filters by site
       cohort_site <- cohort_tbl %>% filter(!!sym(site_col)%in%c(site_list_thisrnd))
 
-      # pulls the visit_concept_id's that correspond to the visit_list
-      visit_types <-
-        visit_type_tbl %>%
-        filter(visit_type %in% c(visit_list[[j]])) %>%
-        select(visit_concept_id) %>% pull()
+      if(any(names(visit_tbl) == 'visit_detail_id')){
+        # pulls the visit_detail_concept_id's that correspond to the visit_list
+        visit_types <-
+          visit_type_tbl %>%
+          filter(visit_type %in% c(visit_list[[j]])) %>%
+          select(visit_detail_concept_id) %>% pull()
 
-      # narrows the visit time to cohort_entry and end date
-      visits <-
-        cohort_site %>%
-        inner_join(
-          select(visit_tbl,
-                 person_id,
-                 visit_occurrence_id,
-                 visit_concept_id,
-                 visit_start_date)
-        ) %>%
-        filter(visit_concept_id %in% c(visit_types)) %>%
-        filter(visit_start_date >= start_date,
-               visit_start_date <= end_date) %>%
-        compute_new(temporary=TRUE,
-                    indexes=list('person_id'))
+        # narrows the visit time to cohort_entry and end date
+        visits <-
+          cohort_site %>%
+          inner_join(
+            select(visit_tbl,
+                   person_id,
+                   visit_detail_id,
+                   visit_occurrence_id,
+                   visit_detail_concept_id,
+                   visit_detail_start_date)
+          ) %>%
+          filter(visit_detail_concept_id %in% c(visit_types)) %>%
+          filter(visit_detail_start_date >= start_date,
+                 visit_detail_start_date <= end_date) %>%
+          compute_new()
 
-      if(time){visits <- visits %>% filter(visit_start_date >= time_start,
-                                           visit_start_date <= time_end)}
+        if(time){visits <- visits %>% filter(visit_detail_start_date >= time_start,
+                                             visit_detail_start_date <= time_end)}
+
+      }else{
+        # pulls the visit_concept_id's that correspond to the visit_list
+        visit_types <-
+          visit_type_tbl %>%
+          filter(visit_type %in% c(visit_list[[j]])) %>%
+          select(visit_concept_id) %>% pull()
+
+        # narrows the visit time to cohort_entry and end date
+        visits <-
+          cohort_site %>%
+          inner_join(
+            select(visit_tbl,
+                   person_id,
+                   visit_occurrence_id,
+                   visit_concept_id,
+                   visit_start_date)
+          ) %>%
+          filter(visit_concept_id %in% c(visit_types)) %>%
+          filter(visit_start_date >= start_date,
+                 visit_start_date <= end_date) %>%
+          compute_new()
+
+        if(time){visits <- visits %>% filter(visit_start_date >= time_start,
+                                             visit_start_date <= time_end)}
+
+      }
 
       # execute function
       domain_compute <- check_func(cht = cohort_site,
