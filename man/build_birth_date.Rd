@@ -2,7 +2,7 @@
 % Please edit documentation in R/cohort_prep.R
 \name{build_birth_date}
 \alias{build_birth_date}
-\title{Build birth date column}
+\title{Build birth_date Column}
 \usage{
 build_birth_date(cohort, person_tbl)
 }
@@ -17,5 +17,7 @@ a table with a new birth_date column that is a combination of year, month, and
 day of birth; improves ability to compute ages
 }
 \description{
-Build birth date column
+This function, which is specific to the OMOP CDM implementation, will create
+an aggregate birth_date column using year_of_birth, month_of_birth, and
+day_of_birth
 }

@@ -2,13 +2,12 @@
 % Please edit documentation in R/anomaly_detection.R
 \name{ms_anom_euclidean}
 \alias{ms_anom_euclidean}
-\title{Euclidean Distance for *_ms_anom_at output}
+\title{*_ms_anom_la Euclidean Distance Computation}
 \usage{
 ms_anom_euclidean(fot_input_tbl, grp_vars, var_col)
 }
 \arguments{
-\item{fot_input_tbl}{table output by compute_fot where the check of interest
-is used as the check_func}
+\item{fot_input_tbl}{table output by \code{\link[=compute_fot]{compute_fot()}} for *_ms_anom_at analyses}
 
 \item{grp_vars}{the variables that should be preserved in the cross join}
 
@@ -20,5 +19,6 @@ data frame with mean and median values for the user provided variable column
 and the euclidean distance value from the all site mean
 }
 \description{
-Euclidean Distance for *_ms_anom_at output
+This function will compute the Euclidean Distance for the \code{var_col} at each
+site in comparison to the overall, all-site mean.
 }

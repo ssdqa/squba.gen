@@ -7,7 +7,7 @@ NULL
 
 #' Create a cross-joined master table for variable reference
 #'
-#' @param cj_tbl multi-site, over time output from check_code_dist_csd function
+#' @param cj_tbl a table with the results of a longitudinal analysis
 #' @param cj_var_names a vector with the names of variables that should be used as the "anchor"
 #'                     of the cross join where all combinations of the variables should be
 #'                     present in the final table
@@ -66,10 +66,12 @@ compute_at_cross_join <- function(cj_tbl,
 
 }
 
-#' *Computing Distance From Mean*
-#' Should be able to use this for other checks,
-#' but naming this way to differentiate from
-#' the existing `compute_dist_mean` function
+#' Compute Distance from Mean & Median
+#'
+#' This function will, for the values in a given `var_col`, compute the
+#' distance between that value and the mean & median values for each group
+#' established by the `grp_vars` parameter.
+#'
 #' @param tbl table with at least the vars specified in `grp_vars` and `var_col`
 #' @param grp_vars variables to group by when computing summary statistics
 #' @param var_col column to compute summary statistics on
@@ -77,9 +79,12 @@ compute_at_cross_join <- function(cj_tbl,
 #'               from which to compute the sd_lower and sd_upper columns
 #' @param num_mad (integer) number of median absolute deviations away from the median
 #'                from which to compute the mad_lower and mad_upper columns
-#' @return a table with the `grp_vars` ** | mean | sd | sd_lower | sd_upper | **
-#'                                     ** anomaly_yn: indicator of whether data point is +/- num_sd from mean **
-#'                                     ** abs_diff_mean: absolute value of difference between mean for group and observation **
+#' @return a table where, for each group in `grp_vars`, the following statistics are computed
+#'         based on the `var_col`: mean, sd, sd_lower, sd_upper, mad, mad_lower, mad_upper,
+#'         anomaly_yn (indicator of whether data point is +/- num_sd from mean or data point is > 90th percentile),
+#'         abs_diff_mean (absolute value of difference between mean for group and observation),
+#'         abs_diff_median (absolute value of difference between median for group and observation),
+#'         n_mad (the number of MAD away from the median where the data point falls)
 #'
 #' @export
 #'
@@ -125,8 +130,8 @@ compute_dist_mean_median <- function(tbl,
 
 #' Compute Euclidean Distance
 #'
-#' @param ms_tbl output from compute_dist_mean_median where the cross-joined table from
-#'               compute_at_cross_join is used as input
+#' @param ms_tbl output from [compute_dist_mean_median()] where the cross-joined table from
+#'               [compute_at_cross_join()] is used as input
 #' @param output_var the output variable that should be used to compute the Euclidean distance
 #'                   i.e. a count or proportion
 #' @param grp_vars vector of grouping variables; the euclidean distance will be computed per group
@@ -171,10 +176,12 @@ compute_euclidean <- function(ms_tbl,
 
 }
 
-#' Euclidean Distance for *_ms_anom_at output
+#' *_ms_anom_la Euclidean Distance Computation
 #'
-#' @param fot_input_tbl table output by compute_fot where the check of interest
-#'                      is used as the check_func
+#' This function will compute the Euclidean Distance for the `var_col` at each
+#' site in comparison to the overall, all-site mean.
+#'
+#' @param fot_input_tbl table output by [compute_fot()] for *_ms_anom_at analyses
 #' @param grp_vars the variables that should be preserved in the cross join
 #' @param var_col the column with the numerical statistic of interest for the euclidean
 #'                distance computation
@@ -218,10 +225,15 @@ ms_anom_euclidean <- function(fot_input_tbl,
 }
 
 
-#' Run Anomilization for *_ss_anom_at
+#' *_ss_anom_la Anomaly Detection
 #'
-#' @param fot_input_tbl table output by compute_fot where the check of interest
-#'                      is used as the check_func
+#' For analyses where the `time_period` is smaller than a year, this function
+#' will execute [timetk::anomalize()] to identify outliers in the time series
+#' using STL regression. For year-level analyses, the same input table will be
+#' returned and a different anomaly detection method will be used at the *_output
+#' stage
+#'
+#' @param fot_input_tbl table output by [compute_fot()] for *_ss_anom_at analyses
 #' @param grp_vars the variables that should be preserved in the cross join
 #' @param var_col the column with the numerical statistic of interest for the euclidean
 #'                distance computation
@@ -267,7 +279,17 @@ anomalize_ss_anom_at <- function(fot_input_tbl,
 
 }
 
-#' Check anomaly detection eligibility
+#' *_ms_anom_cs Anomaly Detection Eligibility
+#'
+#' This function will, for each group in a dataframe, identify groups that are eligible
+#' for anomaly detection analysis by examining the values in the `var_col`.
+#' The following conditions will disqualify a group from the anomaly detection analysis:
+#'  (1) Sample size < 5 in group
+#'  (2) Mean < 0.02 or Median < 0.01
+#'  (3) Mean value < 0.05 and range <0.01
+#'  (4) Coefficient of variance <0.01 and sample size <11
+#' If no groups meet this criteria, a warning will display in the console indicating
+#' that no groups were eligible.
 #'
 #' @param df_tbl output from the computation of a particular function for anomaly detection
 #' @param grp_vars the columns to group by to compute the summary statistics for
@@ -280,12 +302,6 @@ anomalize_ss_anom_at <- function(fot_input_tbl,
 #'  `min_val`, `range_val`, `total_ct`, `analysis_eligible`
 #'  the `analysis_eligible` will indicate whether the group for which the user
 #'  wishes to detect an anomaly for is eligible for analysis.
-#'
-#'  The following conditions will disqualify a group from the anomaly detection analysis:
-#'  (1) Sample size < 5 in group
-#'  (2) Mean < 0.02 or Median < 0.01
-#'  (3) Mean value < 0.05 and range <0.01
-#'  (4) Coefficient of variance <0.01 and sample size <11
 #'
 #' @export
 #'
@@ -333,12 +349,17 @@ compute_dist_anomalies <- function(df_tbl,
 
 
 
-#' Computes anomaly detection for a group (e.g., multi-site analysis)
-#' Assumes: (1) No time component; (2) Table has a column indicating
-#' whether a particular group or row is eligible for analysis; (3) column
-#' variable exists for which to compute the anomaly
+#' *_ms_anom_cs Anomaly Detection
 #'
-#' @param df_tbl tbl for analysis; usually output from `compute_dist_anomalies`
+#' This function will identify anomalies in a dataframe using the
+#' [hotspots::outliers()] function. It assumes:
+#' (1) No time component;
+#' (2) Table has a column indicating whether a particular group or row is eligible for analysis;
+#' (3) column variable exists for which to compute the anomaly
+#' These conditions are met by the output of [compute_dist_anomalies()], which is typically
+#' the input for this function
+#'
+#' @param df_tbl tbl for analysis; usually output from [compute_dist_anomalies()]
 #' @param tail_input whether to detect anomaly on right, left, or both sides; defaults to `both`
 #' @param p_input the threshold for anomaly; defaults to 0.9
 #' @param column_analysis a string, which the name of the column for which to compute anomaly detection;
@@ -410,30 +431,38 @@ detect_outliers <- function(df_tbl,
 }
 
 
-#' Compute Jaccard Index
+#' Jaccard Index Computation
+#'
+#' This function will compute the Jaccard Similarity Index for each combination of
+#' two variables that occur within a specific patient's record. This function is compatible
+#' with both the OMOP and PCORnet CDMs based on the user's selection.
 #'
 #' @param jaccard_input_tbl tbl that will undergo jaccard index computation;
-#'                          the requirement is that it contains at least two columns: `person_id` and `concept_id`
-#'                          where each row represents an instance where a specific `concept_id` is used for a given patient (`person_id`)
-#'                          Alternatively, it can be a list of all unique `person_id` and `concept_id` combinations
+#'                          the requirement is that it contains at least two columns: `person_id`/`patid` and a variable column
+#'                          where each row represents an instance where a specific variable is used for a given patient
+#'                          Alternatively, it can be a list of all unique `person_id`/`patid` and variable combinations
 #' @param var_col the column within `jaccard_input_table` that contains all the concepts that should be compared to each other
+#' @param omop_or_pcornet indication of which CDM should be used - either `omop` or `pcornet`; this will determine
+#'                        which person identifier column will be used
 #'
-#' @return a table with both concepts, labeled `concept1` and `concept2`, the co-occurrence (`cocount`), individual
+#' @return a table with both variables, labeled `concept1` and `concept2`, the co-occurrence (`cocount`), individual
 #'         concept counts (`concept1_ct`, `concept2_ct`), total unique patient counts where either code is used (`concept_count_union`),
-#'         the `jaccard_index`, as well as proportion of patients where the concept appears (`concept1_prop`, `concepet2_prop`)
+#'         the `jaccard_index`, as well as proportion of patients where the concept appears (`concept1_prop`, `concept2_prop`)
 #'
 #' @export
 #'
 #' @import tidyr
 #'
 compute_jaccard <- function(jaccard_input_tbl,
-                            var_col) {
+                            var_col,
+                            omop_or_pcornet) {
 
   match_class <- function(x, type = var_class) {class(x) <- type; x}
+  if(omop_or_pcornet == 'omop'){person_col <- 'person_id'}else{person_col <- 'patid'}
 
   persons_concepts <-
     jaccard_input_tbl %>% ungroup %>% #distinct() %>% collect()
-    select(person_id,
+    select(!!sym(person_col),
            var_col) %>% distinct() %>% collect()
 
   var_class <- class(persons_concepts[[var_col]])
@@ -441,7 +470,7 @@ compute_jaccard <- function(jaccard_input_tbl,
   persons_concepts_cts <-
     persons_concepts %>%
     group_by(!!sym(var_col)) %>%
-    summarise(var_person_ct=n_distinct(person_id))
+    summarise(var_person_ct=n_distinct(!!sym(person_col)))
 
   concord <-
     persons_concepts %>% table() %>% crossprod()

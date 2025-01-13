@@ -3,7 +3,7 @@
 \docType{data}
 \name{ssdqa_colors_standard}
 \alias{ssdqa_colors_standard}
-\title{Setting standard colors}
+\title{SSDQA Standard Color Hexes}
 \format{
 An object of class \code{character} of length 12.
 }
@@ -11,6 +11,6 @@ An object of class \code{character} of length 12.
 ssdqa_colors_standard
 }
 \description{
-Setting standard colors
+SSDQA Standard Color Hexes
 }
 \keyword{datasets}

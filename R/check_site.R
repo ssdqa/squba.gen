@@ -1,12 +1,16 @@
 
-#' Check site type (single vs multi) against number of sites provided in list
+#' Check Site Type
+#'
+#' This function will evaluate the number of distinct values in the "site" column in
+#' the provided cohort table and determine how that compares to the provided
+#' `multi_or_single_site` designation.
 #'
 #' @param cohort a cohort tbl with a column for `site`, `person_id`, `start_date` and `end_date`
 #' @param multi_or_single_site Option to run the function on a single vs multiple sites
 #'                               - @single - run the function for a single site
 #'                               - @multi - run the function for multiple sites
 #'
-#' @return if @multi_or_single_site = single but multiple sites are provided, the cohort table
+#' @return if `multi_or_single_site` = single but multiple sites are provided, the cohort table
 #'         is returned with a summary site column equaling `combined` so all sites will be treated
 #'         as one
 #'
@@ -62,7 +66,11 @@ check_site_type <- function(cohort,
   return(final)
 }
 
-#' check for `site_summ` column and switch to `site`
+#' Replace Summary Site Column
+#'
+#' For analyses where a summary site column was created by [check_site_type()],
+#' this function will replace the name of that column with the original "site"
+#' name.
 #'
 #' @param tbl the tbl with to use for
 #' replacement of `site_summ`

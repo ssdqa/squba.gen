@@ -1,4 +1,4 @@
-#' compute age at cohort entry
+#' Age at Cohort Entry -- OMOP
 #'
 #' @param cohort_tbl table of cohort members with at least `person_id`, `start_date`, and `end_date`
 #' @param person_tbl the CDM person table
@@ -8,10 +8,9 @@
 #' @return `cohort_tbl` with the age at cohort entry and age group for each patient
 #'
 #'
-
-compute_age_groups <- function(cohort_tbl,
-                               person_tbl,
-                               age_groups) {
+compute_age_groups_omop <- function(cohort_tbl,
+                                    person_tbl,
+                                    age_groups) {
 
   new_person <- build_birth_date(cohort = cohort_tbl,
                                  person_tbl = person_tbl)
@@ -35,15 +34,76 @@ compute_age_groups <- function(cohort_tbl,
 
 }
 
-#' intake codeset to customize patient labels
+#' Age at Cohort Entry -- PCORnet
+#'
+#' @param cohort_tbl table of cohort members with at least `person_id`, `start_date`, and `end_date`
+#' @param person_tbl the CDM person table
+#' @param age_groups a csv file (template found in specs folder) where the user defines the minimum and maximum
+#'                   age allowed for a group and provides a string name for the group
+#'
+#' @return `cohort_tbl` with the age at cohort entry and age group for each patient
+#'
+#'
+compute_age_groups_pcnt <- function(cohort_tbl,
+                                    person_tbl,
+                                    age_groups) {
+
+  cohorts <- cohort_tbl %>%
+    inner_join(select(person_tbl,
+                      patid,
+                      birth_date)) %>%
+    mutate(age_diff = sql(calc_days_between_dates(date_col_1 = 'birth_date', date_col_2 = 'start_date')),
+           age_ce = floor(age_diff/365.25)) %>%
+    collect_new()
+
+  cohorts_grpd <- cohorts %>%
+    cross_join(age_groups) %>%
+    mutate(age_grp = case_when(age_ce >= min_age & age_ce <= max_age ~ group,
+                               TRUE ~ as.character(NA))) %>%
+    filter(!is.na(age_grp)) %>%
+    right_join(cohorts) %>%
+    select(-c(birth_date, min_age, max_age, group)) %>%
+    mutate(age_grp = case_when(is.na(age_grp) ~ 'No Group',
+                               TRUE ~ age_grp))
+
+  copy_to_new(df = cohorts_grpd)
+
+}
+
+#' Custom Codeset-Based Flags -- PCORnet
+#'
+#' @param cohort_tbl table of cohort members with at least `person_id`, `start_date`, and `end_date`
+#' @param codeset_meta a CSV file with metadata relating to a codeset with customized group labels
+#'
+#'                     this file should have `table`, `column`, and `file_name` columns
+#'
+cohort_codeset_label_pcnt <- function(cohort_tbl,
+                                      codeset_meta){
+
+  codeset <- load_codeset(codeset_meta$file_name)
+
+  filter_tbl <- select(cdm_tbl('encounter'), patid, encounterid, providerid, facilityid) %>%
+    left_join(cdm_tbl(codeset_meta$table)) %>%
+    rename('concept_id' = codeset_meta$column) %>%
+    inner_join(codeset, by = 'concept_id') %>%
+    select(person_id, flag) %>%
+    distinct() %>%
+    right_join(cohort_tbl, by = 'person_id') %>%
+    mutate(flag = case_when(is.na(flag) ~ 'None',
+                            TRUE ~ flag))
+
+
+}
+
+#' Custom Codeset-Based Flags -- OMOP
 #'
 #' @param cohort_tbl table of cohort members with at least `person_id`, `start_date`, and `end_date`
 #' @param codeset_meta a CSV file with metadata relating to a codeset with customized group labels
 #'
 #'                     this file should have `table`, `column`, and `file_name` columns
 
-cohort_codeset_label <- function(cohort_tbl,
-                                 codeset_meta){
+cohort_codeset_label_omop <- function(cohort_tbl,
+                                      codeset_meta){
 
   codeset <- load_codeset(codeset_meta$file_name)
 
@@ -61,21 +121,22 @@ cohort_codeset_label <- function(cohort_tbl,
 }
 
 
-#' Prepare cohort for check execution
+#' Prepare Cohort
 #'
-#' requirement: fields must have columns:
-#' `person_id`, `start_date`, `end_date`
+#' For the cohort table input into any of the *_process functions, this function
+#' will prepare that cohort for the rest of the analysis. This includes computing
+#' follow-up based on start and end dates and computing age at cohort entry categorized
+#' into user-provided groups. Note that the cohort table must have columns:
+#' `site`, `person_id`, `start_date`, `end_date`
 #'
 #' @param cohort_tbl table with required fields for each member of the cohort
-#' @param age_groups option to read in a CSV with age group designations to allow for stratification
+#' @param age_groups option to read in a table with age group designations to allow for stratification
 #'                   by age group in output. defaults to `NULL`.
-#'                   sample CSV can be found in `specs/age_group_definitions.csv`
-#' @param codeset option to read in a CSV with codeset metadata to allow for labelling of
+#' @param codeset option to read in a table with codeset metadata to allow for labelling of
 #'                cohort members based on a user-provided codeset. the codeset itself should be
-#'                a CSV file with at least a `concept_id` column and a `flag` column with user-provided
+#'                a table with at least a `concept_id` column and a `flag` column with user-provided
 #'                labels.
-#'                a sample metadata CSV, where the user can provide the correct table and column information,
-#'                can be found in `specs/codeset_metadata.csv`
+#' @param omop_or_pcornet string indicating the appropriate backend CDM (`omop` or `pcornet`)
 #'
 #'
 #' @return a tbl with person_id and the following:
@@ -91,35 +152,44 @@ cohort_codeset_label <- function(cohort_tbl,
 #'
 #' @export
 #'
-
 prepare_cohort <- function(cohort_tbl,
                            age_groups = NULL,
-                           codeset = NULL) {
+                           codeset = NULL,
+                           omop_or_pcornet) {
 
   ct <- cohort_tbl
 
   stnd <-
     ct %>%
     mutate(fu_diff = sql(calc_days_between_dates(date_col_1 = 'start_date', date_col_2 = 'end_date')),
-           fu = round(fu_diff/365.25,3)) #%>%
-  #select(site, person_id, start_date, end_date, fu) #%>%
-  #add_site()
+           fu = round(fu_diff/365.25,3))
 
   if(!is.data.frame(age_groups)){
     final_age <- stnd
   }else{
-    final_age <- compute_age_groups(cohort_tbl = stnd,
-                                    person_tbl = cdm_tbl('person'),
-                                    age_groups = age_groups)
+    if(omop_or_pcornet == 'omop'){
+      final_age <- compute_age_groups_omop(cohort_tbl = stnd,
+                                           person_tbl = cdm_tbl('person'),
+                                           age_groups = age_groups)
+    }else if(omop_or_pcornet == 'pcornet'){
+      final_age <- compute_age_groups_pcnt(cohort_tbl = stnd,
+                                           person_tbl = cdm_tbl('demographic'),
+                                           age_groups = age_groups)
+      }
 
     }
 
   if(!is.data.frame(codeset)){
     final_cdst <- stnd
   }else{
-    final_cdst <- cohort_codeset_label(cohort_tbl = stnd,
-                                       codeset_meta = codeset) %>%
-      add_site()}
+    if(omop_or_pcornet == 'omop'){
+    final_cdst <- cohort_codeset_label_omop(cohort_tbl = stnd,
+                                            codeset_meta = codeset)
+    }else if(omop_or_pcornet == 'pcornet'){
+      final_cdst <- cohort_codeset_label_pcnt(cohort_tbl = stnd,
+                                              codeset_meta = codeset)
+    }
+  }
 
   final <- stnd %>%
     left_join(final_age) %>%
@@ -130,7 +200,11 @@ prepare_cohort <- function(cohort_tbl,
 }
 
 
-#' Build birth date column
+#' Build birth_date Column
+#'
+#' This function, which is specific to the OMOP CDM implementation, will create
+#' an aggregate birth_date column using year_of_birth, month_of_birth, and
+#' day_of_birth
 #'
 #' @param cohort table with cohort members; must at least have person_id
 #' @param person_tbl CDM person table; must at least have person_id, year_of_birth,
@@ -156,3 +230,44 @@ build_birth_date <- function(cohort,
 
 }
 
+#' Calculate Date Differences in Multiple SQL Backends
+#'
+#' Function to get sql code for number of days between date1 and date2.
+#' Adapted for sql dialects for Postgres and MS SQL.
+#'
+#' Should always be wrapped by sql()
+#' @param date_col_1 Date col 1
+#' @param date_col_2 Date col 2
+#' @param db connection type object. Defaulted to config('db_src') for standard framework
+#' Functionality added for Postgres, MS SQL and Snowflake
+#'
+#' @return an integer representing the difference (in days) between the two provided
+#' dates
+#'
+calc_days_between_dates <-
+  function(date_col_1, date_col_2, db = config("db_src")) {
+    if (class(db) %in% "Microsoft SQL Server") {
+      sql_code <-
+        paste0("DATEDIFF(day, ", date_col_1, ", ", date_col_2, ")")
+    } else if (class(db) %in% "PqConnection") {
+      sql_code <-
+        paste0(date_col_2, " - ", date_col_1)
+    } else if (class(db) %in% "Snowflake") {
+      sql_code <-
+        paste0(
+          "DATEDIFF(day, ",
+          '"',
+          date_col_1,
+          '"',
+          ",",
+          '"',
+          date_col_2,
+          '"',
+          ")"
+        )
+    }else if(class(db) %in% 'SQLiteConnection'){
+      sql_code <-
+        paste0("julianday(", date_col_2, ") - julianday(", date_col_1, ")")
+    }
+    return(sql_code)
+  }

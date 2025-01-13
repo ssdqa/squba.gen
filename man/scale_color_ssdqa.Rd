@@ -2,7 +2,7 @@
 % Please edit documentation in R/colors.R
 \name{scale_color_ssdqa}
 \alias{scale_color_ssdqa}
-\title{Color scale constructor for ssdqa colors}
+\title{SSDQA Color Scale Constructor}
 \usage{
 scale_color_ssdqa(palette = "main", discrete = TRUE, reverse = FALSE, ...)
 }
@@ -18,5 +18,6 @@ If no palette specified, defaults to "main" palette}
 scale_color_gradientn(), used respectively when discrete is TRUE or FALSE}
 }
 \description{
-Color scale constructor for ssdqa colors
+This function will operate with ggplot objects to use the SSDQA
+standard colors/color palettes to add color to graphs
 }

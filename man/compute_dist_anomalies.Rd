@@ -2,7 +2,7 @@
 % Please edit documentation in R/anomaly_detection.R
 \name{compute_dist_anomalies}
 \alias{compute_dist_anomalies}
-\title{Check anomaly detection eligibility}
+\title{*_ms_anom_cs Anomaly Detection Eligibility}
 \usage{
 compute_dist_anomalies(df_tbl, grp_vars, var_col, denom_cols)
 }
@@ -22,13 +22,15 @@ the \code{df_tbl} with the following computed:
 \code{min_val}, \code{range_val}, \code{total_ct}, \code{analysis_eligible}
 the \code{analysis_eligible} will indicate whether the group for which the user
 wishes to detect an anomaly for is eligible for analysis.
-
+}
+\description{
+This function will, for each group in a dataframe, identify groups that are eligible
+for anomaly detection analysis by examining the values in the \code{var_col}.
 The following conditions will disqualify a group from the anomaly detection analysis:
 (1) Sample size < 5 in group
 (2) Mean < 0.02 or Median < 0.01
 (3) Mean value < 0.05 and range <0.01
 (4) Coefficient of variance <0.01 and sample size <11
-}
-\description{
-Check anomaly detection eligibility
+If no groups meet this criteria, a warning will display in the console indicating
+that no groups were eligible.
 }

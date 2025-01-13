@@ -2,10 +2,7 @@
 % Please edit documentation in R/anomaly_detection.R
 \name{detect_outliers}
 \alias{detect_outliers}
-\title{Computes anomaly detection for a group (e.g., multi-site analysis)
-Assumes: (1) No time component; (2) Table has a column indicating
-whether a particular group or row is eligible for analysis; (3) column
-variable exists for which to compute the anomaly}
+\title{*_ms_anom_cs Anomaly Detection}
 \usage{
 detect_outliers(
   df_tbl,
@@ -17,7 +14,7 @@ detect_outliers(
 )
 }
 \arguments{
-\item{df_tbl}{tbl for analysis; usually output from \code{compute_dist_anomalies}}
+\item{df_tbl}{tbl for analysis; usually output from \code{\link[=compute_dist_anomalies]{compute_dist_anomalies()}}}
 
 \item{tail_input}{whether to detect anomaly on right, left, or both sides; defaults to \code{both}}
 
@@ -30,8 +27,11 @@ detect_outliers(
 \item{column_variable}{a string, which is the name of the variable to compute summary statistics for;}
 }
 \description{
-Computes anomaly detection for a group (e.g., multi-site analysis)
-Assumes: (1) No time component; (2) Table has a column indicating
-whether a particular group or row is eligible for analysis; (3) column
-variable exists for which to compute the anomaly
+This function will identify anomalies in a dataframe using the
+\code{\link[hotspots:hotspots]{hotspots::outliers()}} function. It assumes:
+(1) No time component;
+(2) Table has a column indicating whether a particular group or row is eligible for analysis;
+(3) column variable exists for which to compute the anomaly
+These conditions are met by the output of \code{\link[=compute_dist_anomalies]{compute_dist_anomalies()}}, which is typically
+the input for this function
 }

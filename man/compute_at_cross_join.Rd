@@ -11,7 +11,7 @@ compute_at_cross_join(
 )
 }
 \arguments{
-\item{cj_tbl}{multi-site, over time output from check_code_dist_csd function}
+\item{cj_tbl}{a table with the results of a longitudinal analysis}
 
 \item{cj_var_names}{a vector with the names of variables that should be used as the "anchor"
 of the cross join where all combinations of the variables should be

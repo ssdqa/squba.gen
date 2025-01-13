@@ -2,7 +2,7 @@
 % Please edit documentation in R/check_site.R
 \name{check_site_type}
 \alias{check_site_type}
-\title{Check site type (single vs multi) against number of sites provided in list}
+\title{Check Site Type}
 \usage{
 check_site_type(cohort, multi_or_single_site)
 }
@@ -14,7 +14,7 @@ check_site_type(cohort, multi_or_single_site)
 - @multi - run the function for multiple sites}
 }
 \value{
-if @multi_or_single_site = single but multiple sites are provided, the cohort table
+if \code{multi_or_single_site} = single but multiple sites are provided, the cohort table
 is returned with a summary site column equaling \code{combined} so all sites will be treated
 as one
 
@@ -24,5 +24,7 @@ as one
 }\if{html}{\out{</div>}}
 }
 \description{
-Check site type (single vs multi) against number of sites provided in list
+This function will evaluate the number of distinct values in the "site" column in
+the provided cohort table and determine how that compares to the provided
+\code{multi_or_single_site} designation.
 }

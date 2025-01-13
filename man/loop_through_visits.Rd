@@ -2,23 +2,26 @@
 % Please edit documentation in R/fact_loops.R
 \name{loop_through_visits}
 \alias{loop_through_visits}
-\title{loops through visit types and sites to compute patient facts}
+\title{Patient Facts per Visit Type}
 \usage{
 loop_through_visits(
   cohort_tbl,
+  omop_or_pcornet,
   check_func,
   site_col,
   time = FALSE,
-  visit_type_tbl = read_codeset("pf_visit_types", "ic"),
+  visit_type_tbl,
   visit_tbl = cdm_tbl("visit_occurrence"),
   site_list,
   visit_list = c("inpatient", "outpatient"),
   grouped_list = c("person_id", "start_date", "end_date", "fu", "site"),
-  domain_tbl = read_codeset("pf_domains_short", "cccc")
+  domain_tbl
 )
 }
 \arguments{
-\item{cohort_tbl}{the tbl that comes from \code{prepare_pf}}
+\item{cohort_tbl}{a table with members of the cohort that has been run through \code{\link[=prepare_cohort]{prepare_cohort()}}}
+
+\item{omop_or_pcornet}{string indicating the appropriate CDM backend (\code{omop} or \code{pcornet})}
 
 \item{check_func}{the base function for the check that needs to be executed across time; this argument
 should be structured as the following, where cht is the cohort and t is the input data
@@ -35,10 +38,14 @@ for the function:
 
 \item{time}{a logical indicating whether the analysis is being conducted longitudinally}
 
-\item{visit_type_tbl}{The visit_concept_ids of interest for the analysis. \code{all} may be used in this field
-to select every visit type; defaults to \code{pf_visit_types} in specs folder}
+\item{visit_type_tbl}{a table that defines available visit types that are called in \code{visit_types.}:
+\itemize{
+\item \code{visit_concept_id} / \code{visit_detail_concept_id}: the visit_(detail)_concept_id that represents the visit type of interest (i.e. 9201 or IP)
+\item \code{visit_type}: the string label to describe the visit type; this label can be used multiple times
+within the file if multiple visit_concept_ids/enc_types represent the visit type
+}}
 
-\item{visit_tbl}{the cdm visit_occurrence tbl; defaults to \code{cdm_tbl('visit_occurrence')}}
+\item{visit_tbl}{the cdm encounter or visit_occurrence or visit_detail tbl}
 
 \item{site_list}{the sites to iterate through}
 
@@ -46,15 +53,19 @@ to select every visit type; defaults to \code{pf_visit_types} in specs folder}
 
 \item{grouped_list}{the input for which to group variables}
 
-\item{domain_tbl}{defaults to \code{pf_domains} in the specs folder;
-@domain: the domain name; output will have this domain
-@default_tbl: the table to pull from
-@field_name the field name to filter by; leave null if no filter
-@field_filter: the filtered codes}
+\item{domain_tbl}{a table that defines the domains where facts should be identified with the following columns:
+\itemize{
+\item \code{domain}: a string label for the domain being examined (i.e. prescription drugs)
+\item \code{domain_tbl}: the CDM table where information for this domain can be found (i.e. drug_exposure)
+\item \code{filter_logic}: an optional string to be parsed as logic to filter the domain_tbl as needed to best represent the domain
+}}
 }
 \value{
-a returned list stratified by visit type
+a list of dataframes with median number of facts per patient for all domains in domain_tbl, where each dataframe is specific to a
+given visit type from visit_list
 }
 \description{
-loops through visit types and sites to compute patient facts
+This function will loop through each site and visit type provided to and execute
+the provided check function to compute facts stratified by visit type. Primarily intended
+for use in the Patient Facts module, but can be adapted for use elsewhere.
 }

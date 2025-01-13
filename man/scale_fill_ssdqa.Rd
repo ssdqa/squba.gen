@@ -2,7 +2,7 @@
 % Please edit documentation in R/colors.R
 \name{scale_fill_ssdqa}
 \alias{scale_fill_ssdqa}
-\title{Fill scale constructor for ssdqa colors}
+\title{SSDQA Fill Scale Constructor}
 \usage{
 scale_fill_ssdqa(palette = "main", discrete = TRUE, reverse = FALSE, ...)
 }
@@ -18,5 +18,6 @@ If no palette specified, defaults to "main" palette}
 scale_color_gradientn(), used respectively when discrete is TRUE or FALSE}
 }
 \description{
-Fill scale constructor for ssdqa colors
+This function will operate with ggplot objects to use the SSDQA
+standard colors/color palettes to add fill to graphs
 }

@@ -1,5 +1,5 @@
 
-#' Reusable FOT function
+#' Compute Facts Over Time
 #'
 #' @param cohort a cohort tbl with a column for `site`, `person_id`, `start_date` and `end_date`
 #' @param check_func the base function for the check that needs to be executed across time; this argument
@@ -85,9 +85,9 @@ compute_fot <- function(cohort,
 
 }
 
-#' loops through visit types and sites to compute patient facts
+#' Patient Facts per Visit Type -- PCORnet
 #'
-#' @param cohort_tbl the tbl that comes from `prepare_pf`
+#' @param cohort_tbl a table with members of the cohort that has been run through [prepare_cohort()]
 #' @param check_func the base function for the check that needs to be executed across time; this argument
 #'                   should be structured as the following, where cht is the cohort and t is the input data
 #'                   for the function:
@@ -100,36 +100,140 @@ compute_fot <- function(cohort,
 #' @param site_col the column in the data where the site variable can be found
 #' @param time a logical indicating whether the analysis is being conducted longitudinally
 #' @param visit_type_tbl The visit_concept_ids of interest for the analysis. `all` may be used in this field
-#'                      to select every visit type; defaults to `pf_visit_types` in specs folder
-#' @param visit_tbl the cdm visit_occurrence tbl; defaults to `cdm_tbl('visit_occurrence')`
+#'                      to select every visit type
+#' @param visit_type_tbl a table that defines available visit types that are called in `visit_list.`
+#' - `enc_type`: enc_type that represents the visit type of interest (i.e. 9201 or IP)
+#' - `visit_type`: the string label to describe the visit type; this label can be used multiple times
+#'                 within the file if multiple visit_concept_ids/enc_types represent the visit type
+#' @param visit_tbl the cdm encounter tbl
 #' @param site_list the sites to iterate through
 #' @param visit_list the list of visit types to iterate through
 #' @param grouped_list the input for which to group variables
-#' @param domain_tbl defaults to `pf_domains` in the specs folder;
-#'      @domain: the domain name; output will have this domain
-#'      @default_tbl: the table to pull from
-#'      @field_name the field name to filter by; leave null if no filter
-#'      @field_filter: the filtered codes
+#' @param domain_tbl a table that defines the domains where facts should be identified with the following columns:
+#' - `domain`: a string label for the domain being examined (i.e. prescription drugs)
+#' - `domain_tbl`: the CDM table where information for this domain can be found (i.e. drug_exposure)
+#' - `filter_logic`: an optional string to be parsed as logic to filter the domain_tbl as needed to best represent the domain
 #'
-#' @return a returned list stratified by visit type
+#' @return a list of dataframes with median number of facts per patient for all domains in domain_tbl, where each dataframe is specific to a
+#'         given visit type from visit_list
 #'
-#' @export
+loop_through_visits_pcnt <- function(cohort_tbl,
+                                     check_func,
+                                     site_col,
+                                     time=FALSE,
+                                     visit_type_tbl,
+                                     visit_tbl=cdm_tbl('encounter'),
+                                     site_list,
+                                     visit_list=c('inpatient','outpatient'),
+                                     grouped_list=c('person_id','start_date','end_date',
+                                                    'fu','site'),
+                                     domain_tbl) {
+
+  # iterates through visits
+  visit_output <- list()
+  for(j in 1:length(visit_list)) {
+
+    # iterates through sites
+    site_output <- list()
+    for(k in 1:length(site_list)) {
+
+      site_list_thisrnd <- site_list[[k]]
+
+      # filters by site
+      cohort_site <- cohort_tbl %>% filter(!!sym(site_col)%in%c(site_list_thisrnd))
+
+      # pulls the visit_concept_id's that correspond to the visit_list
+      visit_types <-
+        visit_type_tbl %>%
+        filter(visit_type %in% c(visit_list[[j]])) %>%
+        select(enc_type) %>% pull()
+
+      # narrows the visit time to cohort_entry and end date
+      visits <-
+        cohort_site %>%
+        inner_join(
+          select(visit_tbl,
+                 patid,
+                 encounterid,
+                 enc_type,
+                 admit_date)
+        ) %>%
+        filter(enc_type %in% c(visit_types)) %>%
+        filter(admit_date >= start_date,
+               admit_date <= end_date) %>%
+        compute_new(temporary=TRUE,
+                    indexes=list('patid'))
+
+      if(time){visits <- visits %>% filter(admit_date >= time_start,
+                                           admit_date <= time_end)}
+
+      # execute function
+      domain_compute <- check_func(cht = cohort_site,
+                                   t = visits)
+
+      site_output[[k]] <- domain_compute
+
+    }
+
+
+    all_site <- reduce(.x=site_output,
+                       .f=dplyr::union)
+
+    #visit_output[[paste0('pf_',config('cohort'),'_',(visit_list[j]))]] <- all_site
+    visit_output[[visit_list[j]]] <- all_site
+
+  }
+
+  visit_output
+
+}
+
+
+#' Patient Facts per Visit Type -- OMOP
+#'
+#' @param cohort_tbl a table with members of the cohort that has been run through [prepare_cohort()]
+#' @param check_func the base function for the check that needs to be executed across time; this argument
+#'                   should be structured as the following, where cht is the cohort and t is the input data
+#'                   for the function:
+#'
+#'                   function(cht, t){check_function(param1 = cht, param2 = t, param3 = param3_input, ...,
+#'                   paramX = paramX_input)}
+#'
+#'                   all parameters for the base check function should be included if any defaults are not being
+#'                   used
+#' @param site_col the column in the data where the site variable can be found
+#' @param time a logical indicating whether the analysis is being conducted longitudinally
+#' @param visit_type_tbl a table that defines available visit types that are called in `visit_types.`:
+#' - `visit_concept_id` / `visit_detail_concept_id`: the visit_(detail)_concept_id that represents the visit type of interest (i.e. 9201 or IP)
+#' - `visit_type`: the string label to describe the visit type; this label can be used multiple times
+#'                 within the file if multiple visit_concept_ids/enc_types represent the visit type
+#' @param visit_tbl the cdm visit_occurrence or visit_detail tbl
+#' @param site_list the sites to iterate through
+#' @param visit_list the list of visit types to iterate through
+#' @param grouped_list the input for which to group variables
+#' @param domain_tbl a table that defines the domains where facts should be identified with the following columns:
+#' - `domain`: a string label for the domain being examined (i.e. prescription drugs)
+#' - `domain_tbl`: the CDM table where information for this domain can be found (i.e. drug_exposure)
+#' - `filter_logic`: an optional string to be parsed as logic to filter the domain_tbl as needed to best represent the domain
+#'
+#' @return a list of dataframes with median number of facts per patient for all domains in domain_tbl, where each dataframe is specific to a
+#'         given visit type from visit_list
 #'
 #' @import dplyr
 #' @import argos
 #' @importFrom purrr reduce
 #'
-loop_through_visits <- function(cohort_tbl,
-                                check_func,
-                                site_col,
-                                time=FALSE,
-                                visit_type_tbl=read_codeset('pf_visit_types','ic'),
-                                visit_tbl=cdm_tbl('visit_occurrence'),
-                                site_list,
-                                visit_list=c('inpatient','outpatient'),
-                                grouped_list=c('person_id','start_date','end_date',
-                                                'fu','site'),
-                                domain_tbl=read_codeset('pf_domains_short','cccc')) {
+loop_through_visits_omop <- function(cohort_tbl,
+                                     check_func,
+                                     site_col,
+                                     time=FALSE,
+                                     visit_type_tbl,
+                                     visit_tbl=cdm_tbl('visit_occurrence'),
+                                     site_list,
+                                     visit_list=c('inpatient','outpatient'),
+                                     grouped_list=c('person_id','start_date','end_date',
+                                                      'fu','site'),
+                                     domain_tbl) {
 
   # iterates through visits
   visit_output <- list()
@@ -216,4 +320,82 @@ loop_through_visits <- function(cohort_tbl,
 
   visit_output
 
+}
+
+
+#' Patient Facts per Visit Type
+#'
+#' This function will loop through each site and visit type provided to and execute
+#' the provided check function to compute facts stratified by visit type. Primarily intended
+#' for use in the Patient Facts module, but can be adapted for use elsewhere.
+#'
+#' @param cohort_tbl a table with members of the cohort that has been run through [prepare_cohort()]
+#' @param omop_or_pcornet string indicating the appropriate CDM backend (`omop` or `pcornet`)
+#' @param check_func the base function for the check that needs to be executed across time; this argument
+#'                   should be structured as the following, where cht is the cohort and t is the input data
+#'                   for the function:
+#'
+#'                   function(cht, t){check_function(param1 = cht, param2 = t, param3 = param3_input, ...,
+#'                   paramX = paramX_input)}
+#'
+#'                   all parameters for the base check function should be included if any defaults are not being
+#'                   used
+#' @param site_col the column in the data where the site variable can be found
+#' @param time a logical indicating whether the analysis is being conducted longitudinally
+#' @param visit_type_tbl a table that defines available visit types that are called in `visit_types.`:
+#' - `visit_concept_id` / `visit_detail_concept_id`: the visit_(detail)_concept_id that represents the visit type of interest (i.e. 9201 or IP)
+#' - `visit_type`: the string label to describe the visit type; this label can be used multiple times
+#'                 within the file if multiple visit_concept_ids/enc_types represent the visit type
+#' @param visit_tbl the cdm encounter or visit_occurrence or visit_detail tbl
+#' @param site_list the sites to iterate through
+#' @param visit_list the list of visit types to iterate through
+#' @param grouped_list the input for which to group variables
+#' @param domain_tbl a table that defines the domains where facts should be identified with the following columns:
+#' - `domain`: a string label for the domain being examined (i.e. prescription drugs)
+#' - `domain_tbl`: the CDM table where information for this domain can be found (i.e. drug_exposure)
+#' - `filter_logic`: an optional string to be parsed as logic to filter the domain_tbl as needed to best represent the domain
+#'
+#' @return a list of dataframes with median number of facts per patient for all domains in domain_tbl, where each dataframe is specific to a
+#'         given visit type from visit_list
+#'
+#' @export
+#'
+loop_through_visits <- function(cohort_tbl,
+                                omop_or_pcornet,
+                                check_func,
+                                site_col,
+                                time=FALSE,
+                                visit_type_tbl,
+                                visit_tbl=cdm_tbl('visit_occurrence'),
+                                site_list,
+                                visit_list=c('inpatient','outpatient'),
+                                grouped_list=c('person_id','start_date','end_date',
+                                              'fu','site'),
+                                domain_tbl) {
+
+  if(omop_or_pcornet == 'omop'){
+    rslt <- loop_through_visits_omop(cohort_tbl = cohort_tbl,
+                                     check_func = check_func,
+                                     site_col = site_col,
+                                     time = time,
+                                     visit_type_tbl = visit_type_tbl,
+                                     visit_tbl = visit_tbl,
+                                     site_list = site_list,
+                                     visit_list = visit_list,
+                                     grouped_list = grouped_list,
+                                     domain_tbl = domain_tbl)
+  }else if(omop_or_pcornet == 'pcornet'){
+    rslt <- loop_through_visits_pcnt(cohort_tbl = cohort_tbl,
+                                     check_func = check_func,
+                                     site_col = site_col,
+                                     time = time,
+                                     visit_type_tbl = visit_type_tbl,
+                                     visit_tbl = visit_tbl,
+                                     site_list = site_list,
+                                     visit_list = visit_list,
+                                     grouped_list = grouped_list,
+                                     domain_tbl = domain_tbl)
+  }else{cli::cli_abort('Please input either `omop` or `pcornet` as your CDM of choice.')}
+
+  return(rslt)
 }

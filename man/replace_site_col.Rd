@@ -2,7 +2,7 @@
 % Please edit documentation in R/check_site.R
 \name{replace_site_col}
 \alias{replace_site_col}
-\title{check for \code{site_summ} column and switch to \code{site}}
+\title{Replace Summary Site Column}
 \usage{
 replace_site_col(tbl)
 }
@@ -14,5 +14,7 @@ replacement of \code{site_summ}}
 tbl with \code{site} replacing \code{site_summ}
 }
 \description{
-check for \code{site_summ} column and switch to \code{site}
+For analyses where a summary site column was created by \code{\link[=check_site_type]{check_site_type()}},
+this function will replace the name of that column with the original "site"
+name.
 }

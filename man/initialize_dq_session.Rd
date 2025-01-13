@@ -2,7 +2,7 @@
 % Please edit documentation in R/initialize_session.R
 \name{initialize_dq_session}
 \alias{initialize_dq_session}
-\title{Initialize Argos Session for DQ work}
+\title{Initialize Argos Session for DQ}
 \usage{
 initialize_dq_session(
   session_name,
@@ -23,7 +23,7 @@ initialize_dq_session(
 path to a json file with the relevant connection information; if the latter,
 is_json should be set to TRUE}
 
-\item{working_directory}{the base directory in which the analysis is taking place; defaults to the output of getwd()}
+\item{working_directory}{the base directory in which the analysis is taking place; defaults to the output of \code{\link[base:getwd]{base::getwd()}}}
 
 \item{file_subdirectory}{the \emph{subdirectory} within the working directory where all files to be used in the analysis
 (i.e. concept sets) are kept. this sets a default file location so the functions can easily
@@ -34,7 +34,7 @@ read in relevant files without having to redefine the path}
 \item{cdm_schema}{string name of the schema where the data in a CDM format is kept}
 
 \item{results_schema}{string name of the schema where results should be output if the user chooses
-to utilize the \code{results_tbl} function native to the argos environment;
+to utilize the \code{argos::results_tbl()} function native to the argos environment;
 defaults to NULL}
 
 \item{vocabulary_schema}{string name of the schema where vocabulary tables (i.e. concept) are
@@ -45,7 +45,7 @@ any results tables; defaults to NULL}
 }
 \value{
 Argos session will be established in the environment; this session is
-automatically established as the default that will appear when \code{get_argos_default}
+automatically established as the default that will appear when \code{argos::get_argos_default()}
 is called
 
 \if{html}{\out{<div class="sourceCode">}}\preformatted{    Function will print the database connection information and session
@@ -53,5 +53,8 @@ is called
 }\if{html}{\out{</div>}}
 }
 \description{
-Initialize Argos Session for DQ work
+This is a wrapper function that will create an argos session and set up internal configurations
+that will allow all downstream functions to access argos convenience functions.
+This step is \emph{REQUIRED}, and makes it easier to connect to a backend database to conduct analyses.
+The standard argos workflow can also be used, but this wrapper is provided for convenience.
 }

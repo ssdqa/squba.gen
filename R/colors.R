@@ -35,7 +35,7 @@ ssdqa_pal <- function(palette, reverse = FALSE, ...) {
   colorRampPalette(pal, ...)
 }
 
-#' Setting standard colors
+#' SSDQA Standard Color Hexes
 #'
 #' @export
 ssdqa_colors_standard<-c(`brightpink`="#FF4D6FFF",
@@ -51,7 +51,7 @@ ssdqa_colors_standard<-c(`brightpink`="#FF4D6FFF",
                          `rosypink`="#BD777AFF",
                          `grey=`="#E2D8D6FF")
 
-#' Setting standard color palettes
+#' SSDQA Standard Color Palettes
 #'
 #' @export
 ssdqa_palettes_standard<-list(
@@ -68,7 +68,10 @@ ssdqa_palettes_standard<-list(
 # usage: ssdqa_pal("dark")(10)
 
 
-#' Fill scale constructor for ssdqa colors
+#' SSDQA Fill Scale Constructor
+#'
+#' This function will operate with ggplot objects to use the SSDQA
+#' standard colors/color palettes to add fill to graphs
 #'
 #' @param palette Character name of palette in ssdqa_palettes_standard
 #'                  If no palette specified, defaults to "main" palette
@@ -88,7 +91,10 @@ scale_fill_ssdqa <- function(palette = "main", discrete = TRUE, reverse = FALSE,
   }
 }
 
-#' Color scale constructor for ssdqa colors
+#' SSDQA Color Scale Constructor
+#'
+#' This function will operate with ggplot objects to use the SSDQA
+#' standard colors/color palettes to add color to graphs
 #'
 #' @param palette Character name of palette in ssdqa_palettes_standard.
 #'                  If no palette specified, defaults to "main" palette

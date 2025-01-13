@@ -2,7 +2,7 @@
 % Please edit documentation in R/output_summary.R
 \name{make_interactive_ssdqa}
 \alias{make_interactive_ssdqa}
-\title{Make ggplot2 graphical output interactive}
+\title{Create Interactive Graphical Output}
 \usage{
 make_interactive_ssdqa(ggplot_obj)
 }
@@ -15,5 +15,6 @@ the same graph with interactive functionality and pre-set tooltips
 based either in the \code{ggiraph} package or the \code{plotly} package
 }
 \description{
-Make ggplot2 graphical output interactive
+This function converts a ggplot object output by any of the *_output functions
+into an interactive ggiraph or plotly object.
 }

@@ -2,23 +2,22 @@
 % Please edit documentation in R/cohort_prep.R
 \name{prepare_cohort}
 \alias{prepare_cohort}
-\title{Prepare cohort for check execution}
+\title{Prepare Cohort}
 \usage{
-prepare_cohort(cohort_tbl, age_groups = NULL, codeset = NULL)
+prepare_cohort(cohort_tbl, age_groups = NULL, codeset = NULL, omop_or_pcornet)
 }
 \arguments{
 \item{cohort_tbl}{table with required fields for each member of the cohort}
 
-\item{age_groups}{option to read in a CSV with age group designations to allow for stratification
-by age group in output. defaults to \code{NULL}.
-sample CSV can be found in \code{specs/age_group_definitions.csv}}
+\item{age_groups}{option to read in a table with age group designations to allow for stratification
+by age group in output. defaults to \code{NULL}.}
 
-\item{codeset}{option to read in a CSV with codeset metadata to allow for labelling of
+\item{codeset}{option to read in a table with codeset metadata to allow for labelling of
 cohort members based on a user-provided codeset. the codeset itself should be
-a CSV file with at least a \code{concept_id} column and a \code{flag} column with user-provided
-labels.
-a sample metadata CSV, where the user can provide the correct table and column information,
-can be found in \code{specs/codeset_metadata.csv}}
+a table with at least a \code{concept_id} column and a \code{flag} column with user-provided
+labels.}
+
+\item{omop_or_pcornet}{string indicating the appropriate backend CDM (\code{omop} or \code{pcornet})}
 }
 \value{
 a tbl with person_id and the following:
@@ -33,6 +32,9 @@ if codeset is not NULL:
 \code{flag}: flag that indiciates patient is a member of a user-specified group in the codeset
 }
 \description{
-requirement: fields must have columns:
-\code{person_id}, \code{start_date}, \code{end_date}
+For the cohort table input into any of the *_process functions, this function
+will prepare that cohort for the rest of the analysis. This includes computing
+follow-up based on start and end dates and computing age at cohort entry categorized
+into user-provided groups. Note that the cohort table must have columns:
+\code{site}, \code{person_id}, \code{start_date}, \code{end_date}
 }

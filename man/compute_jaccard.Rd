@@ -2,23 +2,28 @@
 % Please edit documentation in R/anomaly_detection.R
 \name{compute_jaccard}
 \alias{compute_jaccard}
-\title{Compute Jaccard Index}
+\title{Jaccard Index Computation}
 \usage{
-compute_jaccard(jaccard_input_tbl, var_col)
+compute_jaccard(jaccard_input_tbl, var_col, omop_or_pcornet)
 }
 \arguments{
 \item{jaccard_input_tbl}{tbl that will undergo jaccard index computation;
-the requirement is that it contains at least two columns: \code{person_id} and \code{concept_id}
-where each row represents an instance where a specific \code{concept_id} is used for a given patient (\code{person_id})
-Alternatively, it can be a list of all unique \code{person_id} and \code{concept_id} combinations}
+the requirement is that it contains at least two columns: \code{person_id}/\code{patid} and a variable column
+where each row represents an instance where a specific variable is used for a given patient
+Alternatively, it can be a list of all unique \code{person_id}/\code{patid} and variable combinations}
 
 \item{var_col}{the column within \code{jaccard_input_table} that contains all the concepts that should be compared to each other}
+
+\item{omop_or_pcornet}{indication of which CDM should be used - either \code{omop} or \code{pcornet}; this will determine
+which person identifier column will be used}
 }
 \value{
-a table with both concepts, labeled \code{concept1} and \code{concept2}, the co-occurrence (\code{cocount}), individual
+a table with both variables, labeled \code{concept1} and \code{concept2}, the co-occurrence (\code{cocount}), individual
 concept counts (\code{concept1_ct}, \code{concept2_ct}), total unique patient counts where either code is used (\code{concept_count_union}),
-the \code{jaccard_index}, as well as proportion of patients where the concept appears (\code{concept1_prop}, \code{concepet2_prop})
+the \code{jaccard_index}, as well as proportion of patients where the concept appears (\code{concept1_prop}, \code{concept2_prop})
 }
 \description{
-Compute Jaccard Index
+This function will compute the Jaccard Similarity Index for each combination of
+two variables that occur within a specific patient's record. This function is compatible
+with both the OMOP and PCORnet CDMs based on the user's selection.
 }

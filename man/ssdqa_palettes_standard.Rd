@@ -3,7 +3,7 @@
 \docType{data}
 \name{ssdqa_palettes_standard}
 \alias{ssdqa_palettes_standard}
-\title{Setting standard color palettes}
+\title{SSDQA Standard Color Palettes}
 \format{
 An object of class \code{list} of length 6.
 }
@@ -11,6 +11,6 @@ An object of class \code{list} of length 6.
 ssdqa_palettes_standard
 }
 \description{
-Setting standard color palettes
+SSDQA Standard Color Palettes
 }
 \keyword{datasets}

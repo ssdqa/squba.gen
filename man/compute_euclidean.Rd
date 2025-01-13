@@ -7,8 +7,8 @@
 compute_euclidean(ms_tbl, output_var, grp_vars = c("site", "concept_id"))
 }
 \arguments{
-\item{ms_tbl}{output from compute_dist_mean_median where the cross-joined table from
-compute_at_cross_join is used as input}
+\item{ms_tbl}{output from \code{\link[=compute_dist_mean_median]{compute_dist_mean_median()}} where the cross-joined table from
+\code{\link[=compute_at_cross_join]{compute_at_cross_join()}} is used as input}
 
 \item{output_var}{the output variable that should be used to compute the Euclidean distance
 i.e. a count or proportion}

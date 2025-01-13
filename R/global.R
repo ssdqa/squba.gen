@@ -1,0 +1,15 @@
+
+utils::globalVariables(c('person_id', 'patid', 'start_date', 'end_date', 'encounterid',
+                         'visit_occurrence_id', 'visit_detail_id', 'provider_id',
+                         'providerid', 'care_site_id', 'facilityid', 'enc_type',
+                         'visit_concept_id', 'visit_detail_concept_id', 'admit_date',
+                         'visit_start_date', 'visit_detail_start_date', 'vocabulary_id',
+                         'day_of_birth', 'month_of_birth', 'year_of_birth', 'visit_type',
+                         'var_person_ct', 'values', 'value', 'v', 'time_start', 'time_end',
+                         'time_increment', 'site_summ', 'site_loess', 'site', 'param',
+                         'min_val', 'min_age', 'mean_allsiteprop', 'max_val', 'max_age',
+                         'join_col', 'ind', 'group', 'fu_diff', 'flag', 'facet_col',
+                         'dist_eucl_mean', 'denom_col', 'date_numeric', 'concept_name',
+                         'concept_count_union', 'concept2_ct', 'concept2', 'concept1',
+                         'concept1_ct', 'cocount', 'birth_date', 'age_grp', 'age_diff',
+                         'abs_diff_median'))

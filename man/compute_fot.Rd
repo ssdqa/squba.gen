@@ -2,7 +2,7 @@
 % Please edit documentation in R/fact_loops.R
 \name{compute_fot}
 \alias{compute_fot}
-\title{Reusable FOT function}
+\title{Compute Facts Over Time}
 \usage{
 compute_fot(
   cohort,
@@ -46,5 +46,5 @@ one dataframe where the output of @check_func has been executed for each @time_p
 the provided @time_span for each of the sites included in @site_list
 }
 \description{
-Reusable FOT function
+Compute Facts Over Time
 }

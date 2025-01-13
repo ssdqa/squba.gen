@@ -2,7 +2,7 @@
 % Please edit documentation in R/output_summary.R
 \name{generate_ref_table}
 \alias{generate_ref_table}
-\title{Generate concept reference table to accompany output}
+\title{Create Concept Reference Table}
 \usage{
 generate_ref_table(tbl, id_col, name_col, denom, time = FALSE)
 }
@@ -26,5 +26,6 @@ a reference table with summary information about the codes in the output that
 could not be displayed in the associated graph
 }
 \description{
-Generate concept reference table to accompany output
+For several SSDQA modules, this function is used to create a summary reference
+table that displays a more detailed breakdown of concept usage
 }

@@ -2,10 +2,7 @@
 % Please edit documentation in R/anomaly_detection.R
 \name{compute_dist_mean_median}
 \alias{compute_dist_mean_median}
-\title{\emph{Computing Distance From Mean}
-Should be able to use this for other checks,
-but naming this way to differentiate from
-the existing \code{compute_dist_mean} function}
+\title{Compute Distance from Mean & Median}
 \usage{
 compute_dist_mean_median(tbl, grp_vars, var_col, num_sd, num_mad)
 }
@@ -23,13 +20,15 @@ from which to compute the sd_lower and sd_upper columns}
 from which to compute the mad_lower and mad_upper columns}
 }
 \value{
-a table with the \code{grp_vars} ** | mean | sd | sd_lower | sd_upper | **
-** anomaly_yn: indicator of whether data point is +/- num_sd from mean **
-** abs_diff_mean: absolute value of difference between mean for group and observation **
+a table where, for each group in \code{grp_vars}, the following statistics are computed
+based on the \code{var_col}: mean, sd, sd_lower, sd_upper, mad, mad_lower, mad_upper,
+anomaly_yn (indicator of whether data point is +/- num_sd from mean or data point is > 90th percentile),
+abs_diff_mean (absolute value of difference between mean for group and observation),
+abs_diff_median (absolute value of difference between median for group and observation),
+n_mad (the number of MAD away from the median where the data point falls)
 }
 \description{
-\emph{Computing Distance From Mean}
-Should be able to use this for other checks,
-but naming this way to differentiate from
-the existing \code{compute_dist_mean} function
+This function will, for the values in a given \code{var_col}, compute the
+distance between that value and the mean & median values for each group
+established by the \code{grp_vars} parameter.
 }

@@ -1,19 +1,24 @@
 
 
-#' Initialize Argos Session for DQ work
+#' Initialize Argos Session for DQ
+#'
+#' This is a wrapper function that will create an argos session and set up internal configurations
+#' that will allow all downstream functions to access argos convenience functions.
+#' This step is *REQUIRED*, and makes it easier to connect to a backend database to conduct analyses.
+#' The standard argos workflow can also be used, but this wrapper is provided for convenience.
 #'
 #' @param session_name arbitrary string to name the session
 #' @param db_conn either a connection object used to connect to a relational database OR the
 #'                path to a json file with the relevant connection information; if the latter,
 #'                is_json should be set to TRUE
-#' @param working_directory the base directory in which the analysis is taking place; defaults to the output of getwd()
+#' @param working_directory the base directory in which the analysis is taking place; defaults to the output of [base::getwd()]
 #' @param file_subdirectory the *subdirectory* within the working directory where all files to be used in the analysis
 #'                       (i.e. concept sets) are kept. this sets a default file location so the functions can easily
 #'                       read in relevant files without having to redefine the path
 #' @param is_json a logical to indicate whether db_conn is the path to a json file or not
 #' @param cdm_schema string name of the schema where the data in a CDM format is kept
 #' @param results_schema string name of the schema where results should be output if the user chooses
-#'                       to utilize the `results_tbl` function native to the argos environment;
+#'                       to utilize the `argos::results_tbl()` function native to the argos environment;
 #'                       defaults to NULL
 #' @param results_tag string to indicate a suffix (if any) that should be appended onto
 #'                    any results tables; defaults to NULL
@@ -21,7 +26,7 @@
 #'                          stored on the database
 #'
 #' @return Argos session will be established in the environment; this session is
-#'         automatically established as the default that will appear when `get_argos_default`
+#'         automatically established as the default that will appear when `argos::get_argos_default()`
 #'         is called
 #'
 #'         Function will print the database connection information and session

@@ -2,7 +2,7 @@
 % Please edit documentation in R/output_summary.R
 \name{param_summ}
 \alias{param_summ}
-\title{Generate parameter summary and recommended string to input into output function}
+\title{Generate Parameter Summary}
 \usage{
 param_summ(check_string, ...)
 }
@@ -20,5 +20,7 @@ to inform users what should be used as the \code{output_function} argument in th
 function
 }
 \description{
-Generate parameter summary and recommended string to input into output function
+This function will summarize the input parameters for the *_process functions, which is
+then used to output a string to the console that indicates the appropriate
+\code{output_function} to use in the *_output step
 }

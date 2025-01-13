@@ -1,13 +1,16 @@
-#' Join to vocabulary table
+#' Join to OMOP Vocabulary Table
+#'
+#' This is a convenience function that allows users to join to an OMOP
+#' vocabulary table (most likely the `concept` table)
 #'
 #' @param tbl data table to which the vocabulary table should be joined
 #' @param vocab_tbl location of the vocabulary table
 #' @param col the column that should be used in the `by` statement to join
 #'            to the vocab_col in the vocabulary table
 #' @param vocab_col the column in the vocabulary table that should be used to join
-#'                  to the @tbl
+#'                  to the `tbl`
 #'
-#' @return the dataframe provided in @tbl with the addition of the concept name
+#' @return the dataframe provided in `tbl` with the addition of the concept name
 #'         column
 #'
 #' @export
@@ -29,7 +32,11 @@ join_to_vocabulary <- function(tbl,
 }
 
 
-#' Generate parameter summary and recommended string to input into output function
+#' Generate Parameter Summary
+#'
+#' This function will summarize the input parameters for the *_process functions, which is
+#' then used to output a string to the console that indicates the appropriate
+#' `output_function` to use in the *_output step
 #'
 #' @param check_string abbreviation to represent check type, should be the same as what
 #'                     is prefixed to the names of the output functions
@@ -72,7 +79,10 @@ param_summ <- function(check_string, ...){
 }
 
 
-#' Generate concept reference table to accompany output
+#' Create Concept Reference Table
+#'
+#' For several SSDQA modules, this function is used to create a summary reference
+#' table that displays a more detailed breakdown of concept usage
 #'
 #' @param tbl intermediate table generated in the output function that contains the concepts
 #'            of interest to be displayed in the reference table
@@ -133,7 +143,10 @@ generate_ref_table <- function(tbl,
 }
 
 
-#' Make ggplot2 graphical output interactive
+#' Create Interactive Graphical Output
+#'
+#' This function converts a ggplot object output by any of the *_output functions
+#' into an interactive ggiraph or plotly object.
 #'
 #' @param ggplot_obj a ggplot object output by any of the `*_output` functions native
 #'                   to each module

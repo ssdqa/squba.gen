@@ -2,7 +2,7 @@
 % Please edit documentation in R/output_summary.R
 \name{join_to_vocabulary}
 \alias{join_to_vocabulary}
-\title{Join to vocabulary table}
+\title{Join to OMOP Vocabulary Table}
 \usage{
 join_to_vocabulary(tbl, vocab_tbl, col, vocab_col = "concept_id")
 }
@@ -15,12 +15,13 @@ join_to_vocabulary(tbl, vocab_tbl, col, vocab_col = "concept_id")
 to the vocab_col in the vocabulary table}
 
 \item{vocab_col}{the column in the vocabulary table that should be used to join
-to the @tbl}
+to the \code{tbl}}
 }
 \value{
-the dataframe provided in @tbl with the addition of the concept name
+the dataframe provided in \code{tbl} with the addition of the concept name
 column
 }
 \description{
-Join to vocabulary table
+This is a convenience function that allows users to join to an OMOP
+vocabulary table (most likely the \code{concept} table)
 }
