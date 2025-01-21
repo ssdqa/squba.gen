@@ -13,6 +13,20 @@
 #' @return the dataframe provided in `tbl` with the addition of the concept name
 #'         column
 #'
+#' @examples
+#' \dontrun{
+#'
+#' sample_input_tbl <- dplyr::tibble('concept' = c(1234, 5678, 91011),
+#'                                   'ct_concept' = c(100, 200, 300),
+#'                                   'site' = c('Site A', 'Site A', 'Site A'))
+#'
+#' join_to_vocabulary(tbl = sample_input_tbl,
+#'                    vocab_tbl = vocabulary_tbl('concept'),
+#'                    col = 'concept',
+#'                    vocab_col = 'concept_id')
+#' }
+#'
+#'
 #' @export
 #'
 join_to_vocabulary <- function(tbl,
@@ -47,6 +61,14 @@ join_to_vocabulary <- function(tbl,
 #' @return output_type string to be piped into a descriptive message at the end of the core function
 #'         to inform users what should be used as the `output_function` argument in the output
 #'         function
+#'
+#' @examples
+#' # intended for use inside the *_process functions
+#'
+#' param_summ(check_string = 'evp',
+#'            multi_or_single_site = 'single',
+#'            anomaly_or_exploratory = 'exploratory',
+#'            time = FALSE)
 #'
 #' @export
 #'
@@ -96,6 +118,48 @@ param_summ <- function(check_string, ...){
 #'
 #' @return a reference table with summary information about the codes in the output that
 #'         could not be displayed in the associated graph
+#'
+#' @examples
+#' # generate reference table for non-time dependent concept summary
+#'
+#' input_tbl_notime <- dplyr::tibble('concept_id' = c(1, 2, 3, 4),
+#'                                   'concept_name' = c('test1', 'test2',
+#'                                                      'test3', 'test4'),
+#'                                   'ct_concept' = c(100, 200, 300, 400),
+#'                                   'site' = c('Site A', 'Site A', 'Site A',
+#'                                   'Site A'))
+#'
+#' generate_ref_table(tbl = input_tbl_notime,
+#'                    id_col = 'concept_id',
+#'                    name_col = 'concept_name',
+#'                    denom = 'ct_concept',
+#'                    time = FALSE)
+#'
+#' # generate reference table for time dependent concept summary
+#'
+#' input_tbl_time <- dplyr::tibble('concept_id' = c(1, 2, 3, 4, 1, 2, 3, 4),
+#'                                 'time_start' = c('2012-01-01', '2012-01-01',
+#'                                                  '2012-01-01', '2012-01-01',
+#'                                                  '2013-01-01', '2013-01-01',
+#'                                                  '2013-01-01', '2013-01-01'),
+#'                                 'time_increment' = c('year','year','year',
+#'                                                      'year','year','year',
+#'                                                      'year','year'),
+#'                                 'concept_name' = c('test1', 'test2', 'test3',
+#'                                                    'test4', 'test1', 'test2',
+#'                                                    'test3', 'test4'),
+#'                                 'ct_concept' = c(100, 200, 300, 400, 200,
+#'                                                  300, 400, 500),
+#'                                 'site' = c('Site A', 'Site A', 'Site A',
+#'                                            'Site A', 'Site A', 'Site A',
+#'                                            'Site A', 'Site A'))
+#'
+#' generate_ref_table(tbl = input_tbl_time,
+#'                    id_col = 'concept_id',
+#'                    name_col = 'concept_name',
+#'                    denom = 'ct_concept',
+#'                    time = TRUE)
+#'
 #'
 #' @export
 #'
@@ -156,6 +220,21 @@ generate_ref_table <- function(tbl,
 #'
 #' @importFrom ggiraph girafe
 #' @importFrom plotly ggplotly
+#'
+#' @examples
+#' \dontrun{
+#' # first, execute the *_output function of interest to build a graph
+#' grph_output <- *_output(process_output = my_df,
+#'                         ...)
+#'
+#' # then, run make_interactive_ssdqa to activate interactive functionality
+#' # some graphs may not have interactive abilities, which will be communicated
+#' # via a message in the console
+#'
+#' make_interactive_ssdqa(grph_output)
+#'
+#' }
+#'
 #'
 #' @export
 #'

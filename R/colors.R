@@ -9,7 +9,7 @@ NULL
 #'
 #' @param ... Character names of ssdqa_colors_standard
 #' @return name and hex code/s for specified color
-#' example usage: extract_color() (returns all) or extract_color("rust) (just returns rust)
+#' example useage: extract_color() (returns all colors) or extract_color("rust") (just returns "rust")
 #'
 extract_color <- function(...) {
   cols <- c(...)
@@ -79,6 +79,16 @@ ssdqa_palettes_standard<-list(
 #' @param reverse Boolean indicating whether the palette should be reversed
 #' @param ... Additional arguments passed to discrete_scale() or
 #'            scale_color_gradientn(), used respectively when discrete is TRUE or FALSE
+#'
+#' @examples
+#' library(ggplot2)
+#'
+#' mtcars %>%
+#'   tibble::rownames_to_column('car_model') %>%
+#'   ggplot(aes(x = car_model, y = wt, fill = car_model)) +
+#'   geom_col() +
+#'   scale_fill_ssdqa()
+#'
 #' @export
 #'
 scale_fill_ssdqa <- function(palette = "main", discrete = TRUE, reverse = FALSE, ...) {
@@ -102,6 +112,16 @@ scale_fill_ssdqa <- function(palette = "main", discrete = TRUE, reverse = FALSE,
 #' @param reverse Boolean indicating whether the palette should be reversed
 #' @param ... Additional arguments passed to discrete_scale() or
 #'            scale_color_gradientn(), used respectively when discrete is TRUE or FALSE
+#'
+#' @examples
+#' library(ggplot2)
+#'
+#' mtcars %>%
+#'   tibble::rownames_to_column('car_model') %>%
+#'   ggplot(aes(x = mpg, y = wt, color = car_model)) +
+#'   geom_point() +
+#'   scale_color_ssdqa()
+#'
 #' @export
 #'
 scale_color_ssdqa <- function(palette = "main", discrete = TRUE, reverse = FALSE, ...) {

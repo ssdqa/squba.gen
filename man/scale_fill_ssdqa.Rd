@@ -21,3 +21,13 @@ scale_color_gradientn(), used respectively when discrete is TRUE or FALSE}
 This function will operate with ggplot objects to use the SSDQA
 standard colors/color palettes to add fill to graphs
 }
+\examples{
+library(ggplot2)
+
+mtcars \%>\%
+  tibble::rownames_to_column('car_model') \%>\%
+  ggplot(aes(x = car_model, y = wt, fill = car_model)) +
+  geom_col() +
+  scale_fill_ssdqa()
+
+}

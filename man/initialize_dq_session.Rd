@@ -58,3 +58,31 @@ that will allow all downstream functions to access argos convenience functions.
 This step is \emph{REQUIRED}, and makes it easier to connect to a backend database to conduct analyses.
 The standard argos workflow can also be used, but this wrapper is provided for convenience.
 }
+\examples{
+\dontrun{
+
+## Create a database connection with DBI or input a file path
+## to a json file with connection details
+conn_dbi <- DBI::dbConnect(drv = my_driver_func(), # insert appropriate driver
+                           dbname = "my_dbname",
+                           host = "my_host",
+                           port = "my_port",
+                           user = "my_username",
+                           password = "my_password")
+
+conn_json <- "path/to/connection/file"
+
+## Establish session and load appropriate convenience functions &
+## configurations into the environment
+
+initialize_dq_session(session_name = "my_session",
+                      db_conn = conn_dbi,
+                      is_json = FALSE,
+                      working_directory = get_wd(),
+                      file_subdirectory = "my_files",
+                      cdm_schema = "my_schema")
+
+}
+
+
+}

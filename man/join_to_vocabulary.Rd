@@ -25,3 +25,18 @@ column
 This is a convenience function that allows users to join to an OMOP
 vocabulary table (most likely the \code{concept} table)
 }
+\examples{
+\dontrun{
+
+sample_input_tbl <- dplyr::tibble('concept' = c(1234, 5678, 91011),
+                                  'ct_concept' = c(100, 200, 300),
+                                  'site' = c('Site A', 'Site A', 'Site A'))
+
+join_to_vocabulary(tbl = sample_input_tbl,
+                   vocab_tbl = vocabulary_tbl('concept'),
+                   col = 'concept',
+                   vocab_col = 'concept_id')
+}
+
+
+}

@@ -11,7 +11,7 @@ extract_color(...)
 }
 \value{
 name and hex code/s for specified color
-example usage: extract_color() (returns all) or extract_color("rust) (just returns rust)
+example useage: extract_color() (returns all colors) or extract_color("rust") (just returns "rust")
 }
 \description{
 Function to extract colors as hex codes

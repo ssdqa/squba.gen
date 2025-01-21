@@ -7,7 +7,7 @@
 replace_site_col(tbl)
 }
 \arguments{
-\item{tbl}{the tbl with to use for
+\item{tbl}{the tbl to use for
 replacement of \code{site_summ}}
 }
 \value{
@@ -17,4 +17,14 @@ tbl with \code{site} replacing \code{site_summ}
 For analyses where a summary site column was created by \code{\link[=check_site_type]{check_site_type()}},
 this function will replace the name of that column with the original "site"
 name.
+}
+\examples{
+## Sample input table
+input_sample <- dplyr::tibble(site = c("Site A", "Site B", "Site C"),
+                              person_id = c(1,2,3),
+                              site_summ = c("combined","combined","combined"))
+
+## Replace site_summ col for final output
+replace_site_col(tbl = input_sample)
+
 }

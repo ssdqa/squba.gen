@@ -23,6 +23,42 @@
 #' @return one dataframe where the output of @check_func has been executed for each @time_period in
 #'         the provided @time_span for each of the sites included in @site_list
 #'
+#' @examples
+#' \dontrun{
+#' # for a function like...
+#'  mock_function <- function(cohort,
+#'                            input_tbl){
+#'
+#'      test <- input_tbl %>%
+#'         inner_join(cohort) %>%
+#'         group_by(site) %>%
+#'         summarise(n_row = n())
+#'
+#'      return(test)
+#'  }
+#'
+#' # allow this function to be executed for each time period in a series
+#' cohort <- dplyr::tibble('person_id' = c(1,2,3,4),
+#'                         'site' = c('Site A', 'Site A', 'Site B', 'Site B'),
+#'                         'start_date' = c('2012-01-01', '2014-01-10',
+#'                                          '2015-03-05, '2020-01-07'),
+#'                         'end_date' = c('2015-01-01', '2019-01-10',
+#'                                        '2010-03-05, '2024-01-07'))
+#'
+#' compute_fot(cohort = cohort,
+#'             check_func = function(dat){
+#'               mock_function(cohort = dat,
+#'                             input_tbl = cdm_tbl('condition_occurrence'))
+#'             },
+#'             site_col = 'site',
+#'             reduce_id = NULL,
+#'             time_period = 'year',
+#'             time_span = c('2012-01-01','2022-12-31'),
+#'             site_list = c('Site A', 'Site B'))
+#'
+#'
+#' }
+#'
 #' @export
 #'
 #' @importFrom lubridate ceiling_date
@@ -357,6 +393,54 @@ loop_through_visits_omop <- function(cohort_tbl,
 #'
 #' @return a list of dataframes with median number of facts per patient for all domains in domain_tbl, where each dataframe is specific to a
 #'         given visit type from visit_list
+#'
+#' @examples
+#' \dontrun{
+#' # for a function like...
+#'  mock_function <- function(cohort,
+#'                            input_tbl){
+#'
+#'      test <- input_tbl %>%
+#'         inner_join(cohort) %>%
+#'         group_by(site) %>%
+#'         summarise(n_row = n())
+#'
+#'      return(test)
+#'  }
+#'
+#' # allow this function to be executed while stratifying by visit type
+#' cohort <- dplyr::tibble('person_id' = c(1,2,3,4),
+#'                         'site' = c('Site A', 'Site A', 'Site B', 'Site B'),
+#'                         'start_date' = c('2012-01-01', '2014-01-10',
+#'                                          '2015-03-05, '2020-01-07'),
+#'                         'end_date' = c('2015-01-01', '2019-01-10',
+#'                                        '2010-03-05, '2024-01-07'))
+#'
+#' sample_visits <- dplyr::tibble('visit_concept_id' = 9202,
+#'                                'visit_type' = 'outpatient')
+#'
+#' sample_domains <- dplyr::tibble('domain' = 'diagnosis',
+#'                                 'domain_tbl' = 'condition_occurrence',
+#'                                 'filter_logic' = NA)
+#'
+#' loop_through_visits(cohort_tbl = cohort,
+#'                     omop_or_pcornet = 'omop',
+#'                     check_func = function(cht, t){
+#'                        mock_function(cohort = cht,
+#'                                      input_tbl = t)
+#'                     },
+#'                     site_col = 'site',
+#'                     time = FALSE,
+#'                     visit_type_tbl = sample_visits,
+#'                     visit_tbl = cdm_tbl('visit_occurrence'),
+#'                     site_list = c('Site A', 'Site B'),
+#'                     visit_list = c('outpatient'),
+#'                     grouped_list = c('person_id','start_date','end_date',
+#'                                      'site'),
+#'                     domain_tbl = sample_domains)
+#'
+#'
+#' }
 #'
 #' @export
 #'

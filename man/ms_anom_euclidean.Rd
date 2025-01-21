@@ -22,3 +22,35 @@ and the euclidean distance value from the all site mean
 This function will compute the Euclidean Distance for the \code{var_col} at each
 site in comparison to the overall, all-site mean.
 }
+\examples{
+# sample multi-site, longitudinal input data (modeled after EVP)
+sample_ms_la_input <- dplyr::tibble('variable' = c('scd', 'scd', 'scd',
+                                                   'scd', 'scd', 'scd',
+                                                   'scd', 'scd', 'scd',
+                                                   'scd', 'scd', 'scd',
+                                                   'scd', 'scd'),
+                             'site' = c('Site A','Site A','Site A',
+                                        'Site A','Site A','Site A',
+                                        'Site A','Site B','Site B',
+                                        'Site B','Site B','Site B',
+                                        'Site B','Site B'),
+                             'count' = c(15, 24, 100, 93, 47, 65,
+                                         33, 92, 153, 122, 5, 99,
+                                         10, 30),
+                             'time_start'=c('2018-01-01','2019-01-01',
+                                   '2020-01-01', '2021-01-01', '2022-01-01',
+                                   '2023-01-01', '2024-01-01','2018-01-01',
+                                   '2019-01-01', '2020-01-01', '2021-01-01',
+                                   '2022-01-01', '2023-01-01', '2024-01-01'),
+                             'time_increment' = c('year','year','year',
+                                   'year', 'year','year', 'year','year',
+                                   'year','year','year','year','year',
+                                   'year'))
+
+# compute euclidean distance for each site & variable combination
+ms_anom_euclidean(fot_input_tbl = sample_ms_la_input \%>\%
+                        dplyr::mutate(time_start = as.Date(time_start)),
+                  grp_vars = c('site', 'variable'),
+                  var_col = 'count')
+
+}

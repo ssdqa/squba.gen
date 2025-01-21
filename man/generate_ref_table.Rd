@@ -29,3 +29,46 @@ could not be displayed in the associated graph
 For several SSDQA modules, this function is used to create a summary reference
 table that displays a more detailed breakdown of concept usage
 }
+\examples{
+# generate reference table for non-time dependent concept summary
+
+input_tbl_notime <- dplyr::tibble('concept_id' = c(1, 2, 3, 4),
+                                  'concept_name' = c('test1', 'test2',
+                                                     'test3', 'test4'),
+                                  'ct_concept' = c(100, 200, 300, 400),
+                                  'site' = c('Site A', 'Site A', 'Site A',
+                                  'Site A'))
+
+generate_ref_table(tbl = input_tbl_notime,
+                   id_col = 'concept_id',
+                   name_col = 'concept_name',
+                   denom = 'ct_concept',
+                   time = FALSE)
+
+# generate reference table for time dependent concept summary
+
+input_tbl_time <- dplyr::tibble('concept_id' = c(1, 2, 3, 4, 1, 2, 3, 4),
+                                'time_start' = c('2012-01-01', '2012-01-01',
+                                                 '2012-01-01', '2012-01-01',
+                                                 '2013-01-01', '2013-01-01',
+                                                 '2013-01-01', '2013-01-01'),
+                                'time_increment' = c('year','year','year',
+                                                     'year','year','year',
+                                                     'year','year'),
+                                'concept_name' = c('test1', 'test2', 'test3',
+                                                   'test4', 'test1', 'test2',
+                                                   'test3', 'test4'),
+                                'ct_concept' = c(100, 200, 300, 400, 200,
+                                                 300, 400, 500),
+                                'site' = c('Site A', 'Site A', 'Site A',
+                                           'Site A', 'Site A', 'Site A',
+                                           'Site A', 'Site A'))
+
+generate_ref_table(tbl = input_tbl_time,
+                   id_col = 'concept_id',
+                   name_col = 'concept_name',
+                   denom = 'ct_concept',
+                   time = TRUE)
+
+
+}

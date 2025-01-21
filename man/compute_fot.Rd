@@ -48,3 +48,40 @@ the provided @time_span for each of the sites included in @site_list
 \description{
 Compute Facts Over Time
 }
+\examples{
+\dontrun{
+# for a function like...
+ mock_function <- function(cohort,
+                           input_tbl){
+
+     test <- input_tbl \%>\%
+        inner_join(cohort) \%>\%
+        group_by(site) \%>\%
+        summarise(n_row = n())
+
+     return(test)
+ }
+
+# allow this function to be executed for each time period in a series
+cohort <- dplyr::tibble('person_id' = c(1,2,3,4),
+                        'site' = c('Site A', 'Site A', 'Site B', 'Site B'),
+                        'start_date' = c('2012-01-01', '2014-01-10',
+                                         '2015-03-05, '2020-01-07'),
+                        'end_date' = c('2015-01-01', '2019-01-10',
+                                       '2010-03-05, '2024-01-07'))
+
+compute_fot(cohort = cohort,
+            check_func = function(dat){
+              mock_function(cohort = dat,
+                            input_tbl = cdm_tbl('condition_occurrence'))
+            },
+            site_col = 'site',
+            reduce_id = NULL,
+            time_period = 'year',
+            time_span = c('2012-01-01','2022-12-31'),
+            site_list = c('Site A', 'Site B'))
+
+
+}
+
+}

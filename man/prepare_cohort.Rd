@@ -38,3 +38,24 @@ follow-up based on start and end dates and computing age at cohort entry categor
 into user-provided groups. Note that the cohort table must have columns:
 \code{site}, \code{person_id}, \code{start_date}, \code{end_date}
 }
+\examples{
+\dontrun{
+sample_cohort <- dplyr::tibble(site = c('Site A', 'Site B'),
+                               person_id = c(1, 2),
+                               start_date = c(as.Date('2012-01-01'),
+                                              as.Date('2014-02-01)),
+                               end_date = c(as.Date('2015-01-01'),
+                                            as.Date('2020-02-01)))
+
+age_grp_tbl <- dplyr::tibble(min_age = c(0, 7),
+                             max_age = c(6, 10),
+                             group = c('0-6', '7-10'))
+
+prepare_cohort(cohort_tbl = sample_cohort,
+               age_groups = age_grp_tbl,
+               omop_or_pcornet = 'omop')
+
+}
+
+
+}

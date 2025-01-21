@@ -12,11 +12,22 @@
 #'
 #' @return if `multi_or_single_site` = single but multiple sites are provided, the cohort table
 #'         is returned with a summary site column equaling `combined` so all sites will be treated
-#'         as one
-#'
-#'         otherwise, the existing site column is left alone. if an illogical parameter combination
+#'         as one; otherwise, the existing site column is left alone. if an illogical parameter combination
 #'         is supplied, the function will provide an error with recommendations on how to remedy the
 #'         issue.
+#'
+#' @examples
+#' ## Create sample cohort
+#' cohort_sample <- dplyr::tibble(site = c('Site A', 'Site B', 'Site C'),
+#'                                person_id = c(1,2,3))
+#'
+#' ## If number of sites & indicated multi/single site match, output same table
+#' check_site_type(cohort = cohort_sample,
+#'                 multi_or_single_site = 'multi')
+#'
+#' ## If multiple sites but single site indicated, create site_summ column
+#' check_site_type(cohort = cohort_sample,
+#'                 multi_or_single_site = 'single')
 #'
 #' @export
 #'
@@ -72,11 +83,20 @@ check_site_type <- function(cohort,
 #' this function will replace the name of that column with the original "site"
 #' name.
 #'
-#' @param tbl the tbl with to use for
+#' @param tbl the tbl to use for
 #' replacement of `site_summ`
 #'
 #'
 #' @return tbl with `site` replacing `site_summ`
+#'
+#' @examples
+#' ## Sample input table
+#' input_sample <- dplyr::tibble(site = c("Site A", "Site B", "Site C"),
+#'                               person_id = c(1,2,3),
+#'                               site_summ = c("combined","combined","combined"))
+#'
+#' ## Replace site_summ col for final output
+#' replace_site_col(tbl = input_sample)
 #'
 #' @export
 

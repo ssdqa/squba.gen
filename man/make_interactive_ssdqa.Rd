@@ -18,3 +18,19 @@ based either in the \code{ggiraph} package or the \code{plotly} package
 This function converts a ggplot object output by any of the *_output functions
 into an interactive ggiraph or plotly object.
 }
+\examples{
+\dontrun{
+# first, execute the *_output function of interest to build a graph
+grph_output <- *_output(process_output = my_df,
+                        ...)
+
+# then, run make_interactive_ssdqa to activate interactive functionality
+# some graphs may not have interactive abilities, which will be communicated
+# via a message in the console
+
+make_interactive_ssdqa(grph_output)
+
+}
+
+
+}

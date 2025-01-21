@@ -21,3 +21,18 @@ This function, which is specific to the OMOP CDM implementation, will create
 an aggregate birth_date column using year_of_birth, month_of_birth, and
 day_of_birth
 }
+\examples{
+\dontrun{
+sample_cohort <- dplyr::tibble(site = c('Site A', 'Site B'),
+                               person_id = c(1, 2),
+                               start_date = c(as.Date('2012-01-01'),
+                                              as.Date('2014-02-01)),
+                               end_date = c(as.Date('2015-01-01'),
+                                            as.Date('2020-02-01)))
+
+build_birth_date(cohort = copy_to_new(df = sample_cohort),
+                 person_tbl = cdm_tbl('person'))
+
+}
+
+}

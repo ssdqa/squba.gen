@@ -2,7 +2,7 @@
 #'
 #' @param cohort_tbl table of cohort members with at least `person_id`, `start_date`, and `end_date`
 #' @param person_tbl the CDM person table
-#' @param age_groups a csv file (template found in specs folder) where the user defines the minimum and maximum
+#' @param age_groups a table where the user defines the minimum and maximum
 #'                   age allowed for a group and provides a string name for the group
 #'
 #' @return `cohort_tbl` with the age at cohort entry and age group for each patient
@@ -16,7 +16,7 @@ compute_age_groups_omop <- function(cohort_tbl,
                                  person_tbl = person_tbl)
 
   cohorts <- new_person %>%
-    mutate(age_diff = as.numeric(start_date - birth_date),
+    mutate(age_diff = as.numeric(as.Date(start_date) - birth_date),
            age_ce = floor(age_diff/365.25)) %>%
     collect()
 
@@ -38,7 +38,7 @@ compute_age_groups_omop <- function(cohort_tbl,
 #'
 #' @param cohort_tbl table of cohort members with at least `person_id`, `start_date`, and `end_date`
 #' @param person_tbl the CDM person table
-#' @param age_groups a csv file (template found in specs folder) where the user defines the minimum and maximum
+#' @param age_groups a table where the user defines the minimum and maximum
 #'                   age allowed for a group and provides a string name for the group
 #'
 #' @return `cohort_tbl` with the age at cohort entry and age group for each patient
@@ -54,7 +54,7 @@ compute_age_groups_pcnt <- function(cohort_tbl,
                       birth_date)) %>%
     mutate(age_diff = sql(calc_days_between_dates(date_col_1 = 'birth_date', date_col_2 = 'start_date')),
            age_ce = floor(age_diff/365.25)) %>%
-    collect_new()
+    collect()
 
   cohorts_grpd <- cohorts %>%
     cross_join(age_groups) %>%
@@ -70,55 +70,43 @@ compute_age_groups_pcnt <- function(cohort_tbl,
 
 }
 
-#' Custom Codeset-Based Flags -- PCORnet
-#'
-#' @param cohort_tbl table of cohort members with at least `person_id`, `start_date`, and `end_date`
-#' @param codeset_meta a CSV file with metadata relating to a codeset with customized group labels
-#'
-#'                     this file should have `table`, `column`, and `file_name` columns
-#'
-cohort_codeset_label_pcnt <- function(cohort_tbl,
-                                      codeset_meta){
 
-  codeset <- load_codeset(codeset_meta$file_name)
-
-  filter_tbl <- select(cdm_tbl('encounter'), patid, encounterid, providerid, facilityid) %>%
-    left_join(cdm_tbl(codeset_meta$table)) %>%
-    rename('concept_id' = codeset_meta$column) %>%
-    inner_join(codeset, by = 'concept_id') %>%
-    select(person_id, flag) %>%
-    distinct() %>%
-    right_join(cohort_tbl, by = 'person_id') %>%
-    mutate(flag = case_when(is.na(flag) ~ 'None',
-                            TRUE ~ flag))
+# cohort_codeset_label_pcnt <- function(cohort_tbl,
+#                                       codeset_meta){
+#
+#   codeset <- load_codeset(codeset_meta$file_name)
+#
+#   filter_tbl <- select(cdm_tbl('encounter'), patid, encounterid, providerid, facilityid) %>%
+#     left_join(cdm_tbl(codeset_meta$table)) %>%
+#     rename('concept_id' = codeset_meta$column) %>%
+#     inner_join(codeset, by = 'concept_id') %>%
+#     select(person_id, flag) %>%
+#     distinct() %>%
+#     right_join(cohort_tbl, by = 'person_id') %>%
+#     mutate(flag = case_when(is.na(flag) ~ 'None',
+#                             TRUE ~ flag))
+#
+#
+# }
 
 
-}
-
-#' Custom Codeset-Based Flags -- OMOP
-#'
-#' @param cohort_tbl table of cohort members with at least `person_id`, `start_date`, and `end_date`
-#' @param codeset_meta a CSV file with metadata relating to a codeset with customized group labels
-#'
-#'                     this file should have `table`, `column`, and `file_name` columns
-
-cohort_codeset_label_omop <- function(cohort_tbl,
-                                      codeset_meta){
-
-  codeset <- load_codeset(codeset_meta$file_name)
-
-  filter_tbl <- select(cdm_tbl('visit_occurrence'), person_id, visit_occurrence_id, provider_id, care_site_id) %>%
-    left_join(cdm_tbl(codeset_meta$table)) %>%
-    rename('concept_id' = codeset_meta$column) %>%
-    inner_join(codeset, by = 'concept_id') %>%
-    select(person_id, flag) %>%
-    distinct() %>%
-    right_join(cohort_tbl, by = 'person_id') %>%
-    mutate(flag = case_when(is.na(flag) ~ 'None',
-                            TRUE ~ flag))
-
-
-}
+# cohort_codeset_label_omop <- function(cohort_tbl,
+#                                       codeset_meta){
+#
+#   codeset <- load_codeset(codeset_meta$file_name)
+#
+#   filter_tbl <- select(cdm_tbl('visit_occurrence'), person_id, visit_occurrence_id, provider_id, care_site_id) %>%
+#     left_join(cdm_tbl(codeset_meta$table)) %>%
+#     rename('concept_id' = codeset_meta$column) %>%
+#     inner_join(codeset, by = 'concept_id') %>%
+#     select(person_id, flag) %>%
+#     distinct() %>%
+#     right_join(cohort_tbl, by = 'person_id') %>%
+#     mutate(flag = case_when(is.na(flag) ~ 'None',
+#                             TRUE ~ flag))
+#
+#
+# }
 
 
 #' Prepare Cohort
@@ -150,6 +138,26 @@ cohort_codeset_label_omop <- function(cohort_tbl,
 #'        if codeset is not NULL:
 #'          `flag`: flag that indiciates patient is a member of a user-specified group in the codeset
 #'
+#' @examples
+#' \dontrun{
+#' sample_cohort <- dplyr::tibble(site = c('Site A', 'Site B'),
+#'                                person_id = c(1, 2),
+#'                                start_date = c(as.Date('2012-01-01'),
+#'                                               as.Date('2014-02-01)),
+#'                                end_date = c(as.Date('2015-01-01'),
+#'                                             as.Date('2020-02-01)))
+#'
+#' age_grp_tbl <- dplyr::tibble(min_age = c(0, 7),
+#'                              max_age = c(6, 10),
+#'                              group = c('0-6', '7-10'))
+#'
+#' prepare_cohort(cohort_tbl = sample_cohort,
+#'                age_groups = age_grp_tbl,
+#'                omop_or_pcornet = 'omop')
+#'
+#' }
+#'
+#'
 #' @export
 #'
 prepare_cohort <- function(cohort_tbl,
@@ -157,11 +165,12 @@ prepare_cohort <- function(cohort_tbl,
                            codeset = NULL,
                            omop_or_pcornet) {
 
-  ct <- cohort_tbl
+  ct <- copy_to_new(df = cohort_tbl)
 
   stnd <-
     ct %>%
     mutate(fu_diff = sql(calc_days_between_dates(date_col_1 = 'start_date', date_col_2 = 'end_date')),
+           fu_diff = as.numeric(fu_diff),
            fu = round(fu_diff/365.25,3))
 
   if(!is.data.frame(age_groups)){
@@ -179,21 +188,21 @@ prepare_cohort <- function(cohort_tbl,
 
     }
 
-  if(!is.data.frame(codeset)){
-    final_cdst <- stnd
-  }else{
-    if(omop_or_pcornet == 'omop'){
-    final_cdst <- cohort_codeset_label_omop(cohort_tbl = stnd,
-                                            codeset_meta = codeset)
-    }else if(omop_or_pcornet == 'pcornet'){
-      final_cdst <- cohort_codeset_label_pcnt(cohort_tbl = stnd,
-                                              codeset_meta = codeset)
-    }
-  }
+  # if(!is.data.frame(codeset)){
+  #   final_cdst <- stnd
+  # }else{
+  #   if(omop_or_pcornet == 'omop'){
+  #   final_cdst <- cohort_codeset_label_omop(cohort_tbl = stnd,
+  #                                           codeset_meta = codeset)
+  #   }else if(omop_or_pcornet == 'pcornet'){
+  #     final_cdst <- cohort_codeset_label_pcnt(cohort_tbl = stnd,
+  #                                             codeset_meta = codeset)
+  #   }
+  # }
 
   final <- stnd %>%
-    left_join(final_age) %>%
-    left_join(final_cdst)
+    left_join(final_age) #%>%
+    #left_join(final_cdst)
 
   return(final)
 
@@ -212,6 +221,20 @@ prepare_cohort <- function(cohort_tbl,
 #'
 #' @return a table with a new birth_date column that is a combination of year, month, and
 #' day of birth; improves ability to compute ages
+#'
+#' @examples
+#' \dontrun{
+#' sample_cohort <- dplyr::tibble(site = c('Site A', 'Site B'),
+#'                                person_id = c(1, 2),
+#'                                start_date = c(as.Date('2012-01-01'),
+#'                                               as.Date('2014-02-01)),
+#'                                end_date = c(as.Date('2015-01-01'),
+#'                                             as.Date('2020-02-01)))
+#'
+#' build_birth_date(cohort = copy_to_new(df = sample_cohort),
+#'                  person_tbl = cdm_tbl('person'))
+#'
+#' }
 #'
 #' @importFrom lubridate make_date
 #' @export
@@ -268,6 +291,9 @@ calc_days_between_dates <-
     }else if(class(db) %in% 'SQLiteConnection'){
       sql_code <-
         paste0("julianday(", date_col_2, ") - julianday(", date_col_1, ")")
+    }else if(class(db) %in% 'PrestoConnection'){
+      sql_code <-
+        paste0("date_diff(day, ", date_col_1, ", ", date_col_2, ")")
     }
     return(sql_code)
   }

@@ -11,7 +11,7 @@ compute_age_groups_pcnt(cohort_tbl, person_tbl, age_groups)
 
 \item{person_tbl}{the CDM person table}
 
-\item{age_groups}{a csv file (template found in specs folder) where the user defines the minimum and maximum
+\item{age_groups}{a table where the user defines the minimum and maximum
 age allowed for a group and provides a string name for the group}
 }
 \value{

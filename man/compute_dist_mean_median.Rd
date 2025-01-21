@@ -32,3 +32,18 @@ This function will, for the values in a given \code{var_col}, compute the
 distance between that value and the mean & median values for each group
 established by the \code{grp_vars} parameter.
 }
+\examples{
+# sample input table
+sample_input <- dplyr::tibble('variable' = c('scd', 'scd', 'scd', 'scd'),
+                              'site' = c('Site A', 'Site A', 'Site B',
+                                         'Site B'),
+                              'count' = c(15, 24, 100, 93))
+
+# execute function against sample data
+compute_dist_mean_median(tbl = sample_input,
+                         grp_vars = 'variable',
+                         var_col = 'count',
+                         num_sd = 1,
+                         num_mad = 1)
+
+}

@@ -69,3 +69,52 @@ This function will loop through each site and visit type provided to and execute
 the provided check function to compute facts stratified by visit type. Primarily intended
 for use in the Patient Facts module, but can be adapted for use elsewhere.
 }
+\examples{
+\dontrun{
+# for a function like...
+ mock_function <- function(cohort,
+                           input_tbl){
+
+     test <- input_tbl \%>\%
+        inner_join(cohort) \%>\%
+        group_by(site) \%>\%
+        summarise(n_row = n())
+
+     return(test)
+ }
+
+# allow this function to be executed while stratifying by visit type
+cohort <- dplyr::tibble('person_id' = c(1,2,3,4),
+                        'site' = c('Site A', 'Site A', 'Site B', 'Site B'),
+                        'start_date' = c('2012-01-01', '2014-01-10',
+                                         '2015-03-05, '2020-01-07'),
+                        'end_date' = c('2015-01-01', '2019-01-10',
+                                       '2010-03-05, '2024-01-07'))
+
+sample_visits <- dplyr::tibble('visit_concept_id' = 9202,
+                               'visit_type' = 'outpatient')
+
+sample_domains <- dplyr::tibble('domain' = 'diagnosis',
+                                'domain_tbl' = 'condition_occurrence',
+                                'filter_logic' = NA)
+
+loop_through_visits(cohort_tbl = cohort,
+                    omop_or_pcornet = 'omop',
+                    check_func = function(cht, t){
+                       mock_function(cohort = cht,
+                                     input_tbl = t)
+                    },
+                    site_col = 'site',
+                    time = FALSE,
+                    visit_type_tbl = sample_visits,
+                    visit_tbl = cdm_tbl('visit_occurrence'),
+                    site_list = c('Site A', 'Site B'),
+                    visit_list = c('outpatient'),
+                    grouped_list = c('person_id','start_date','end_date',
+                                     'site'),
+                    domain_tbl = sample_domains)
+
+
+}
+
+}

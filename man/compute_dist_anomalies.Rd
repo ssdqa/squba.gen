@@ -34,3 +34,26 @@ The following conditions will disqualify a group from the anomaly detection anal
 If no groups meet this criteria, a warning will display in the console indicating
 that no groups were eligible.
 }
+\examples{
+# create sample input (modeled after EVP)
+sample_ms_input <- dplyr::tibble('site' = c('Site A', 'Site A', 'Site A',
+                                            'Site A', 'Site B', 'Site B',
+                                            'Site B', 'Site B'),
+                                 'variable' = c('dx', 'dx', 'drug', 'drug',
+                                                'dx', 'dx', 'drug', 'drug'),
+                                 'count' = c(100, 140, 39, 42, 137, 111,
+                                             12, 15),
+                                 'total_var' = c(1000, 1000, 200, 200, 1500,
+                                                 1500, 100, 100))
+# execute the full analysis, including compute_dist_anomalies and
+# detect_outliers
+anomaly_output1 <- compute_dist_anomalies(df_tbl = sample_ms_input,
+                                          grp_vars = 'variable',
+                                          var_col = 'count',
+                                          denom_cols = 'total_var')
+
+anomaly_output2 <- detect_outliers(df_tbl = anomaly_output1,
+                                   column_analysis = 'count',
+                                   column_variable = 'variable')
+
+}

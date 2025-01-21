@@ -24,3 +24,12 @@ This function will summarize the input parameters for the *_process functions, w
 then used to output a string to the console that indicates the appropriate
 \code{output_function} to use in the *_output step
 }
+\examples{
+# intended for use inside the *_process functions
+
+param_summ(check_string = 'evp',
+           multi_or_single_site = 'single',
+           anomaly_or_exploratory = 'exploratory',
+           time = FALSE)
+
+}

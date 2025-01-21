@@ -27,3 +27,15 @@ This function will compute the Jaccard Similarity Index for each combination of
 two variables that occur within a specific patient's record. This function is compatible
 with both the OMOP and PCORnet CDMs based on the user's selection.
 }
+\examples{
+# create sample input with person identifier and variable associations
+sample_input <- dplyr::tibble('person_id' = c(1,1,2,2,3,4,5,5),
+                              'variable' = c('dx', 'drug', 'drug', 'dx',
+                                             'drug', 'dx', 'dx', 'drug'))
+# compute jaccard index
+compute_jaccard(jaccard_input_tbl = sample_input,
+                var_col = 'variable',
+                omop_or_pcornet = 'omop')
+
+
+}

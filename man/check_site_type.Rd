@@ -16,15 +16,26 @@ check_site_type(cohort, multi_or_single_site)
 \value{
 if \code{multi_or_single_site} = single but multiple sites are provided, the cohort table
 is returned with a summary site column equaling \code{combined} so all sites will be treated
-as one
-
-\if{html}{\out{<div class="sourceCode">}}\preformatted{    otherwise, the existing site column is left alone. if an illogical parameter combination
-    is supplied, the function will provide an error with recommendations on how to remedy the
-    issue.
-}\if{html}{\out{</div>}}
+as one; otherwise, the existing site column is left alone. if an illogical parameter combination
+is supplied, the function will provide an error with recommendations on how to remedy the
+issue.
 }
 \description{
 This function will evaluate the number of distinct values in the "site" column in
 the provided cohort table and determine how that compares to the provided
 \code{multi_or_single_site} designation.
+}
+\examples{
+## Create sample cohort
+cohort_sample <- dplyr::tibble(site = c('Site A', 'Site B', 'Site C'),
+                               person_id = c(1,2,3))
+
+## If number of sites & indicated multi/single site match, output same table
+check_site_type(cohort = cohort_sample,
+                multi_or_single_site = 'multi')
+
+## If multiple sites but single site indicated, create site_summ column
+check_site_type(cohort = cohort_sample,
+                multi_or_single_site = 'single')
+
 }
