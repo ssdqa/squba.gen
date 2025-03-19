@@ -5,7 +5,7 @@
 \alias{ssdqa_colors_standard}
 \title{SSDQA Standard Color Hexes}
 \format{
-An object of class \code{character} of length 12.
+An object of class \code{character} of length 13.
 }
 \usage{
 ssdqa_colors_standard

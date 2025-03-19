@@ -49,7 +49,8 @@ ssdqa_colors_standard<-c(`brightpink`="#FF4D6FFF",
                          `violet`="#2D2651FF",
                          `redorange`="#C8350DFF",
                          `rosypink`="#BD777AFF",
-                         `grey=`="#E2D8D6FF")
+                         `grey=`="#E2D8D6FF",
+                         `lightorange`="#FCB861")
 
 #' SSDQA Standard Color Palettes
 #'
@@ -58,7 +59,7 @@ ssdqa_palettes_standard<-list(
   `dark` = extract_color("rust", "violet", "redorange"),
   `fun` = extract_color("brightpink", "lightblue", "yellow"),
   `beachy`=extract_color("lightblue","dustblue","seagreen"),
-  `diverging`=extract_color("dustblue", "grey", "rust"),
+  `diverging`=extract_color("dustblue", "lightorange", "rust"),
   `sequential`=extract_color("grey", "rosypink", "rust"),
   `main`=extract_color("brightpink", "lightblue", "burntorange", "yellow",
                       "lightgreen","dustblue", "seagreen", "rust",
