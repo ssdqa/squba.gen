@@ -75,19 +75,19 @@ test_that('generate reference table', {
 })
 
 
-test_that('interactive ssdqa output', {
+test_that('interactive squba output', {
 
   grph1 <- mtcars %>%
     ggplot(aes(x = as.character(gear), y = mean(wt),
                fill = mpg, tooltip = mpg)) +
     ggiraph::geom_col_interactive()
 
-  expect_message(make_interactive_ssdqa(grph1))
+  expect_message(make_interactive_squba(grph1))
 
   grph1[['metadata']] <- tibble('pkg_backend' = 'ggiraph',
                                'tooltip' = TRUE)
 
-  expect_no_error(make_interactive_ssdqa(grph1))
+  expect_no_error(make_interactive_squba(grph1))
 
   grph2 <- mtcars %>%
     ggplot(aes(x = as.character(gear), y = mean(wt),
@@ -97,7 +97,7 @@ test_that('interactive ssdqa output', {
   grph2[['metadata']] <- tibble('pkg_backend' = 'plotly',
                                'tooltip' = FALSE)
 
-  expect_no_error(make_interactive_ssdqa(grph2))
+  expect_no_error(make_interactive_squba(grph2))
 
   grph3 <- mtcars %>%
     ggplot(aes(x = mpg, y = wt,
@@ -107,6 +107,6 @@ test_that('interactive ssdqa output', {
   grph3[['metadata']] <- tibble('pkg_backend' = 'plotly_ssc',
                                 'tooltip' = FALSE)
 
-  expect_no_error(make_interactive_ssdqa(grph3))
+  expect_no_error(make_interactive_squba(grph3))
 
 })

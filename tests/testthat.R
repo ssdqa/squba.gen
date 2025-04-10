@@ -7,6 +7,6 @@
 # * https://testthat.r-lib.org/articles/special-files.html
 
 library(testthat)
-library(ssdqa.gen)
+library(squba.gen)
 
-test_check("ssdqa.gen")
+test_check("squba.gen")

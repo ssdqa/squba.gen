@@ -6,7 +6,7 @@ test_that('fill colors', {
       ggplot(aes(x = as.character(gear), y = mean(wt),
                  fill = as.character(gear))) +
       geom_col() +
-      scale_fill_ssdqa()
+      scale_fill_squba()
   )
 
   expect_no_error(
@@ -14,7 +14,7 @@ test_that('fill colors', {
       ggplot(aes(x = as.character(gear), y = mean(wt),
                  fill = mpg)) +
       geom_col() +
-      scale_fill_ssdqa(discrete = FALSE, reverse = TRUE)
+      scale_fill_squba(discrete = FALSE, reverse = TRUE)
   )
 })
 
@@ -26,7 +26,7 @@ test_that('color colors', {
       ggplot(aes(x = mpg, y = wt,
                  color = cyl)) +
       geom_point() +
-      scale_color_ssdqa(discrete = FALSE)
+      scale_color_squba(discrete = FALSE)
   )
 
   expect_no_error(
@@ -34,7 +34,7 @@ test_that('color colors', {
       ggplot(aes(x = mpg, y = wt,
                  color = as.character(cyl))) +
       geom_point() +
-      scale_color_ssdqa()
+      scale_color_squba()
   )
 
 })
