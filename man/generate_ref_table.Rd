@@ -26,7 +26,7 @@ a reference table with summary information about the codes in the output that
 could not be displayed in the associated graph
 }
 \description{
-For several SSDQA modules, this function is used to create a summary reference
+For several SQUBA modules, this function is used to create a summary reference
 table that displays a more detailed breakdown of concept usage
 }
 \examples{

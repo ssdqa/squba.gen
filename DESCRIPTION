@@ -1,5 +1,5 @@
-Package: ssdqa.gen
-Title: Study-Specific Data Quality Analysis (SSDQA) Ecosystem Support Functions
+Package: squba.gen
+Title: Study-Specific Quality, Utility, and Breadth Assessment (SQUBA) Ecosystem Support Functions
 Version: 0.0.0.9000
 Authors@R: 
     c(person("Hanieh", "Razzaghi", email = "razzaghih@chop.edu", role = c("aut"),
@@ -11,18 +11,18 @@ Authors@R:
       person("Charles", "Bailey", email = "baileyc@chop.edu", role = c("aut"),
              comment = c(ORCID = "0000-0002-8967-0662")))
 Description: These general-use functions are intended to support the use of each of the distinct modules
-    that are part of the Study-Specific Data Quality Analysis (SSDQA) ecosystem. While they work best used 
-    in conjunction with the SSDQA modules and are typically executed as part of larger summary functions,
+    that are part of the Study-Specific Quality, Utility, and Breadth Assessment (SQUBA) ecosystem. While they work best used 
+    in conjunction with the SQUBA modules and are typically executed as part of larger summary functions,
     these operations can be run independently against data in the proper formatting. They are also needed
     if a multi-site analysis is desired but site data is stored independently. For more information on how
     to use the functions in this package to that end, please see the 
-    "Multi-Site Analysis for Independent Data Sources" vignette included in the SSDQA module of interest (where applicable).
+    "Multi-Site Analysis for Independent Data Sources" vignette included in the SQUBA module of interest (where applicable).
 License: MPL-2.0
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
-URL: https://github.com/ssdqa/ssdqa.gen
-BugReports: https://github.com/ssdqa/ssdqa.gen/issues
+URL: https://github.com/ssdqa/squba.gen
+BugReports: https://github.com/ssdqa/squba.gen/issues
 Imports: 
     cli (>= 3.6.3),
     DBI (>= 1.1.3),

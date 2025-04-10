@@ -1,3 +1,3 @@
-# ssdqa.gen (development version)
+# squba.gen (development version)
 
 * Initial CRAN submission.

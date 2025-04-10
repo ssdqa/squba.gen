@@ -103,7 +103,7 @@ param_summ <- function(check_string, ...){
 
 #' Create Concept Reference Table
 #'
-#' For several SSDQA modules, this function is used to create a summary reference
+#' For several SQUBA modules, this function is used to create a summary reference
 #' table that displays a more detailed breakdown of concept usage
 #'
 #' @param tbl intermediate table generated in the output function that contains the concepts
@@ -178,7 +178,7 @@ generate_ref_table <- function(tbl,
       distinct(site, !!sym(id_col), !!sym(name_col), denom_col) %>%
       gt::gt() %>%
       fmt_number(denom_col, decimals = 0) %>%
-      data_color(palette = ssdqa_colors_standard, columns = c(site)) %>%
+      data_color(palette = squba_colors_standard, columns = c(site)) %>%
       cols_label(denom_col = 'Total Count') %>%
       tab_header('Concept Reference Table') %>%
       opt_interactive(use_search = TRUE)
@@ -195,7 +195,7 @@ generate_ref_table <- function(tbl,
       distinct() %>%
       gt::gt() %>%
       fmt_number(denom_col, decimals = 0) %>%
-      data_color(palette = ssdqa_colors_standard, columns = c(site)) %>%
+      data_color(palette = squba_colors_standard, columns = c(site)) %>%
       cols_label(denom_col = 'Total Count (All Time Points)') %>%
       tab_header('Concept Reference Table') %>%
       opt_interactive(use_search = TRUE)
@@ -227,18 +227,18 @@ generate_ref_table <- function(tbl,
 #' grph_output <- *_output(process_output = my_df,
 #'                         ...)
 #'
-#' # then, run make_interactive_ssdqa to activate interactive functionality
+#' # then, run make_interactive_squba to activate interactive functionality
 #' # some graphs may not have interactive abilities, which will be communicated
 #' # via a message in the console
 #'
-#' make_interactive_ssdqa(grph_output)
+#' make_interactive_squba(grph_output)
 #'
 #' }
 #'
 #'
 #' @export
 #'
-make_interactive_ssdqa <- function(ggplot_obj){
+make_interactive_squba <- function(ggplot_obj){
 
   grph_meta <- ggplot_obj[['metadata']]
 

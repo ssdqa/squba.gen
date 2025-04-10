@@ -7,7 +7,7 @@
 extract_color(...)
 }
 \arguments{
-\item{...}{Character names of ssdqa_colors_standard}
+\item{...}{Character names of squba_colors_standard}
 }
 \value{
 name and hex code/s for specified color

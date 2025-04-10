@@ -7,7 +7,7 @@ NULL
 # tutorial: https://drsimonj.svbtle.com/creating-corporate-colour-palettes-for-ggplot2
 #' Function to extract colors as hex codes
 #'
-#' @param ... Character names of ssdqa_colors_standard
+#' @param ... Character names of squba_colors_standard
 #' @return name and hex code/s for specified color
 #' example useage: extract_color() (returns all colors) or extract_color("rust") (just returns "rust")
 #'
@@ -15,30 +15,30 @@ extract_color <- function(...) {
   cols <- c(...)
 
   if (is.null(cols))
-    return (ssdqa_colors_standard)
+    return (squba_colors_standard)
 
-  ssdqa_colors_standard[cols]
+  squba_colors_standard[cols]
 }
 
 #' Return function to interpolate a color palette
 #'
-#' @param palette Character name of palette in ssdqa_palettes_standard
+#' @param palette Character name of palette in squba_palettes_standard
 #' @param reverse Boolean indicating whether the palette should be reversed
 #' @param ... Additional arguments to pass to colorRampPalette()
 #' @return color palettes, interpolated if necessary, with specified scheme and number of colors
-#' example usage: ssdqa_pal("beachy")(10)
-ssdqa_pal <- function(palette, reverse = FALSE, ...) {
-  pal <- ssdqa_palettes_standard[[palette]]
+#' example usage: squba_pal("beachy")(10)
+squba_pal <- function(palette, reverse = FALSE, ...) {
+  pal <- squba_palettes_standard[[palette]]
 
   if (reverse) pal <- rev(pal)
 
   colorRampPalette(pal, ...)
 }
 
-#' SSDQA Standard Color Hexes
+#' SQUBA Standard Color Hexes
 #'
 #' @export
-ssdqa_colors_standard<-c(`brightpink`="#FF4D6FFF",
+squba_colors_standard<-c(`brightpink`="#FF4D6FFF",
                          `lightblue`="#579EA4FF",
                          `burntorange`="#DF7713FF",
                          `yellow`="#F9C000FF",
@@ -52,10 +52,10 @@ ssdqa_colors_standard<-c(`brightpink`="#FF4D6FFF",
                          `grey=`="#E2D8D6FF",
                          `lightorange`="#FCB861")
 
-#' SSDQA Standard Color Palettes
+#' SQUBA Standard Color Palettes
 #'
 #' @export
-ssdqa_palettes_standard<-list(
+squba_palettes_standard<-list(
   `dark` = extract_color("rust", "violet", "redorange"),
   `fun` = extract_color("brightpink", "lightblue", "yellow"),
   `beachy`=extract_color("lightblue","dustblue","seagreen"),
@@ -66,15 +66,15 @@ ssdqa_palettes_standard<-list(
                       "violet", "redorange", "rosypink")
 )
 
-# usage: ssdqa_pal("dark")(10)
+# usage: squba_pal("dark")(10)
 
 
-#' SSDQA Fill Scale Constructor
+#' SQUBA Fill Scale Constructor
 #'
-#' This function will operate with ggplot objects to use the SSDQA
+#' This function will operate with ggplot objects to use the SQUBA
 #' standard colors/color palettes to add fill to graphs
 #'
-#' @param palette Character name of palette in ssdqa_palettes_standard
+#' @param palette Character name of palette in squba_palettes_standard
 #'                  If no palette specified, defaults to "main" palette
 #' @param discrete Boolean indicating whether fill aesthetic is discrete or not
 #' @param reverse Boolean indicating whether the palette should be reversed
@@ -88,26 +88,26 @@ ssdqa_palettes_standard<-list(
 #'   tibble::rownames_to_column('car_model') %>%
 #'   ggplot(aes(x = car_model, y = wt, fill = car_model)) +
 #'   geom_col() +
-#'   scale_fill_ssdqa()
+#'   scale_fill_squba()
 #'
 #' @export
 #'
-scale_fill_ssdqa <- function(palette = "main", discrete = TRUE, reverse = FALSE, ...) {
-  pal <- ssdqa_pal(palette = palette, reverse = reverse)
+scale_fill_squba <- function(palette = "main", discrete = TRUE, reverse = FALSE, ...) {
+  pal <- squba_pal(palette = palette, reverse = reverse)
 
   if (discrete) {
-    discrete_scale("fill", paste0("ssdqa_", palette), palette = pal, ...)
+    discrete_scale("fill", paste0("squba_", palette), palette = pal, ...)
   } else {
     scale_fill_gradientn(colours = pal(256), ...)
   }
 }
 
-#' SSDQA Color Scale Constructor
+#' SQUBA Color Scale Constructor
 #'
-#' This function will operate with ggplot objects to use the SSDQA
+#' This function will operate with ggplot objects to use the SQUBA
 #' standard colors/color palettes to add color to graphs
 #'
-#' @param palette Character name of palette in ssdqa_palettes_standard.
+#' @param palette Character name of palette in squba_palettes_standard.
 #'                  If no palette specified, defaults to "main" palette
 #' @param discrete Boolean indicating whether color aesthetic is discrete or not
 #' @param reverse Boolean indicating whether the palette should be reversed
@@ -121,15 +121,15 @@ scale_fill_ssdqa <- function(palette = "main", discrete = TRUE, reverse = FALSE,
 #'   tibble::rownames_to_column('car_model') %>%
 #'   ggplot(aes(x = mpg, y = wt, color = car_model)) +
 #'   geom_point() +
-#'   scale_color_ssdqa()
+#'   scale_color_squba()
 #'
 #' @export
 #'
-scale_color_ssdqa <- function(palette = "main", discrete = TRUE, reverse = FALSE, ...) {
-  pal <- ssdqa_pal(palette = palette, reverse = reverse)
+scale_color_squba <- function(palette = "main", discrete = TRUE, reverse = FALSE, ...) {
+  pal <- squba_pal(palette = palette, reverse = reverse)
 
   if (discrete) {
-    discrete_scale("colour", paste0("ssdqa_", palette), palette = pal, ...)
+    discrete_scale("colour", paste0("squba_", palette), palette = pal, ...)
   } else {
     scale_color_gradientn(colours = pal(256), ...)
   }
