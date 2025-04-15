@@ -11,7 +11,7 @@ loop_through_visits(
   site_col,
   time = FALSE,
   visit_type_tbl,
-  visit_tbl = cdm_tbl("visit_occurrence"),
+  visit_tbl,
   site_list,
   visit_list = c("inpatient", "outpatient"),
   grouped_list = c("person_id", "start_date", "end_date", "fu", "site"),
