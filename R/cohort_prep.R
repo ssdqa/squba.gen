@@ -268,32 +268,27 @@ build_birth_date <- function(cohort,
 #' dates
 #'
 calc_days_between_dates <-
-  function(date_col_1, date_col_2, db = config("db_src")) {
-    if (class(db) %in% "Microsoft SQL Server") {
+  function(date_col_1, date_col_2, db = get_argos_default()$config("db_src")) {
+
+    if (class(db)[1] == "Microsoft SQL Server") {
       sql_code <-
         paste0("DATEDIFF(day, ", date_col_1, ", ", date_col_2, ")")
-    } else if (class(db) %in% "PqConnection") {
+    } else if (class(db)[1] == "Snowflake") {
       sql_code <-
-        paste0(date_col_2, " - ", date_col_1)
-    } else if (class(db) %in% "Snowflake") {
-      sql_code <-
-        paste0(
-          "DATEDIFF(day, ",
-          '"',
-          date_col_1,
-          '"',
-          ",",
-          '"',
-          date_col_2,
-          '"',
-          ")"
-        )
-    }else if(class(db) %in% 'SQLiteConnection'){
+        paste0("DATEDIFF(day, ",'"',date_col_1,'"',", ",'"',date_col_2,'"',")")
+    } else if (class(db)[1] == "Oracle") {
+      sql_code <- paste0('("', date_col_2, '" - "', date_col_1, '")')
+    } else if (class(db)[1] == "src_BigQueryConnection") {
+      sql_code <- paste0("DATE_DIFF(",date_col_1,", ",date_col_2,", DAY)")
+    } else if(class(db) %in% 'SQLiteConnection'){
       sql_code <-
         paste0("julianday(", date_col_2, ") - julianday(", date_col_1, ")")
     }else if(class(db) %in% 'PrestoConnection'){
       sql_code <-
-        paste0("date_diff('day', ", date_col_1, ", ", date_col_2, ")")
+        paste0("date_diff(day, ", date_col_1, ", ", date_col_2, ")")
+    } else {
+      sql_code <-
+        paste0(date_col_2, " - ", date_col_1)
     }
     return(sql_code)
   }

@@ -4,7 +4,11 @@
 \alias{calc_days_between_dates}
 \title{Calculate Date Differences in Multiple SQL Backends}
 \usage{
-calc_days_between_dates(date_col_1, date_col_2, db = config("db_src"))
+calc_days_between_dates(
+  date_col_1,
+  date_col_2,
+  db = get_argos_default()$config("db_src")
+)
 }
 \arguments{
 \item{date_col_1}{Date col 1}
