@@ -12,4 +12,4 @@ utils::globalVariables(c('person_id', 'patid', 'start_date', 'end_date', 'encoun
                          'dist_eucl_mean', 'denom_col', 'date_numeric', 'concept_name',
                          'concept_count_union', 'concept2_ct', 'concept2', 'concept1',
                          'concept1_ct', 'cocount', 'birth_date', 'age_grp', 'age_diff',
-                         'abs_diff_median'))
+                         'abs_diff_median', 'module', 'check', 'name', 'name_cat'))

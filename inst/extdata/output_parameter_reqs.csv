@@ -1,0 +1,63 @@
+﻿module,check,Always Required,Required for Check,Optional
+scv,ss_exp_cs,"process_output, output_function, code_type","num_codes, num_mappings",vocab_tbl
+scv,ss_exp_la,"process_output, output_function, code_type",num_mappings,vocab_tbl
+scv,ms_exp_cs,"process_output, output_function, code_type",filter_concept,vocab_tbl
+scv,ms_exp_la,"process_output, output_function, code_type","filter_concept, num_mappings",vocab_tbl
+scv,ss_anom_cs,"process_output, output_function, code_type","filter_concept*, num_mappings, num_codes (*jaccard_index = TRUE only)",vocab_tbl
+scv,ss_anom_la,"process_output, output_function, code_type",filter_concept,vocab_tbl
+scv,ms_anom_cs,"process_output, output_function, code_type","filter_concept, num_mappings",vocab_tbl
+scv,ms_anom_la,"process_output, output_function, code_type","filter_concept, filter_mapped",vocab_tbl
+pf,ss_exp_cs,"process_output, output_function",output,
+pf,ss_exp_la,"process_output, output_function",date_breaks_str,
+pf,ms_exp_cs,"process_output, output_function",output,
+pf,ms_exp_la,"process_output, output_function",output,
+pf,ss_anom_cs,"process_output, output_function",output,
+pf,ss_anom_la,"process_output, output_function","output, domain_filter, visit_filter",
+pf,ms_anom_cs,"process_output, output_function",visit_filter,
+pf,ms_anom_la,"process_output, output_function","domain_filter, visit_filter",
+ca,ss_exp_cs,"process_output, output_function, var_col",,log_scale
+ca,ms_exp_cs,"process_output, output_function, var_col",,log_scale
+ca,ms_anom_cs,"process_output, output_function, var_col",,
+ssc,ss_exp_cs,"process_output, output_function",alt_cohort_filter,
+ssc,ss_anom_cs,"process_output, output_function",,
+ssc,ms_exp_cs,"process_output, output_function",alt_cohort_filter,
+ssc,ms_anom_cs,"process_output, output_function",,
+prc,ss_exp_cs,"process_output, output_function",,
+prc,ss_exp_la,"process_output, output_function",,
+prc,ms_exp_cs,"process_output, output_function",,
+prc,ms_exp_la,"process_output, output_function",dist_from_stat,
+prc,ss_anom_cs,"process_output, output_function",,
+prc,ss_anom_la,"process_output, output_function",event_filter,
+prc,ms_anom_cs,"process_output, output_function",,
+prc,ms_anom_la,"process_output, output_function",event_filter,
+pes,ss_exp_cs,"process_output, output_function",,
+pes,ss_exp_la,"process_output, output_function",,
+pes,ms_exp_cs,"process_output, output_function",,
+pes,ms_exp_la,"process_output, output_function",,
+pes,ss_anom_la,"process_output, output_function",,
+pes,ms_anom_cs,"process_output, output_function",,
+pes,ms_anom_la,"process_output, output_function",,
+evp,ss_exp_cs,"process_output, output_function",output_level,
+evp,ss_exp_la,"process_output, output_function",output_level,
+evp,ms_exp_cs,"process_output, output_function",output_level,
+evp,ms_exp_la,"process_output, output_function","output_level, filter_variable",
+evp,ss_anom_cs,"process_output, output_function",,
+evp,ss_anom_la,"process_output, output_function","output_level, filter_variable",
+evp,ms_anom_cs,"process_output, output_function",output_level,
+evp,ms_anom_la,"process_output, output_function","output_level, filter_variable",
+csd,ss_exp_cs,"process_output, output_function","num_variables, num_mappings","concept_set, vocab_tbl"
+csd,ss_exp_la,"process_output, output_function","filter_variable, num_mappings, output_value","concept_set, vocab_tbl"
+csd,ms_exp_cs,"process_output, output_function",num_variables,"concept_set, vocab_tbl"
+csd,ms_exp_la,"process_output, output_function","filter_variable, filter_concept, output_value","concept_set, vocab_tbl"
+csd,ss_anom_cs,"process_output, output_function",filter_variable,"concept_set, vocab_tbl"
+csd,ss_anom_la,"process_output, output_function","filter_variable, filter_concept","concept_set, vocab_tbl"
+csd,ms_anom_cs,"process_output, output_function","filter_variable, output_value","concept_set, vocab_tbl, text_wrapping_char"
+csd,ms_anom_la,"process_output, output_function",filter_concept,"concept_set, vocab_tbl"
+cnc_sp,ss_exp_cs,,,
+cnc_sp,ss_exp_la,,,
+cnc_sp,ms_exp_cs,,,
+cnc_sp,ms_exp_la,,,
+cnc_sp,ss_anom_cs,,,
+cnc_sp,ss_anom_la,,,
+cnc_sp,ms_anom_cs,,,
+cnc_sp,ms_anom_la,,,

@@ -15,9 +15,9 @@ able to be vectorized (i.e. a CDM tbl, codeset, etc) will not appear in the fina
 summary}
 }
 \value{
-output_type string to be piped into a descriptive message at the end of the core function
-to inform users what should be used as the \code{output_function} argument in the output
-function
+a vector with information about which parameters will be required to use
+the *_output function for each module; intended to be fed into a cli message
+command to generate a console message
 }
 \description{
 This function will summarize the input parameters for the *_process functions, which is
