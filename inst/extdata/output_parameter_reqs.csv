@@ -53,11 +53,11 @@ csd,ss_anom_cs,"process_output, output_function",filter_variable,"concept_set, v
 csd,ss_anom_la,"process_output, output_function","filter_variable, filter_concept","concept_set, vocab_tbl"
 csd,ms_anom_cs,"process_output, output_function","filter_variable, output_value","concept_set, vocab_tbl, text_wrapping_char"
 csd,ms_anom_la,"process_output, output_function",filter_concept,"concept_set, vocab_tbl"
-cnc_sp,ss_exp_cs,,,
-cnc_sp,ss_exp_la,,,
-cnc_sp,ms_exp_cs,,,
-cnc_sp,ms_exp_la,,,
-cnc_sp,ss_anom_cs,,,
-cnc_sp,ss_anom_la,,,
-cnc_sp,ms_anom_cs,,,
-cnc_sp,ms_anom_la,,,
+cnc_sp,ss_exp_cs,"cnc_sp_process_output, cnc_sp_process_names, output_function",top_n,"facet_vars, specialty_filter"
+cnc_sp,ss_exp_la,"cnc_sp_process_output, cnc_sp_process_names, output_function",,"facet_vars, specialty_filter"
+cnc_sp,ms_exp_cs,"cnc_sp_process_output, cnc_sp_process_names, output_function",top_n,"facet_vars, specialty_filter"
+cnc_sp,ms_exp_la,"cnc_sp_process_output, cnc_sp_process_names, output_function",top_n,"facet_vars, specialty_filter"
+cnc_sp,ss_anom_cs,"cnc_sp_process_output, cnc_sp_process_names, output_function",p_value,"facet_vars, specialty_filter"
+cnc_sp,ss_anom_la,"cnc_sp_process_output, cnc_sp_process_names, output_function","top_n, specialty_filter",facet_vars
+cnc_sp,ms_anom_cs,"cnc_sp_process_output, cnc_sp_process_names, output_function",p_value,"facet_vars, specialty_filter"
+cnc_sp,ms_anom_la,"cnc_sp_process_output, cnc_sp_process_names, output_function",specialty_filter,facet_vars
