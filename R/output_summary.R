@@ -89,6 +89,7 @@ param_summ <- function(check_string, ...){
     mutate(v = ifelse(value == TRUE, 'la', 'cs')) %>% distinct(v) %>% pull()
 
   output_type <- paste0(site_type, '_', exp_anom, '_', time)
+  output_string <- paste0(check_string, '_', site_type, '_', exp_anom, '_', time)
 
   output_ref <- readr::read_csv(paste0(system.file("extdata", package = 'squba.gen'),
                                        '/output_parameter_reqs.csv'))
@@ -101,7 +102,9 @@ param_summ <- function(check_string, ...){
     mutate(name_cat = paste0(paste0(cli::style_bold(cli::col_blue(name)), ": ", value))) %>%
     pull(name_cat)
 
-  return(output_vector)
+  add_output_type <- output_vector %>% append(output_string)
+
+  return(add_output_type)
 
   # cli::boxx(c('You can optionally use this dataframe in the accompanying',
   # '`scv_output` function. Here are the parameters you will need:', '', vec1, '',
