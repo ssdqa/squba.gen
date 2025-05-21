@@ -58,9 +58,9 @@ join_to_vocabulary <- function(tbl,
 #'            able to be vectorized (i.e. a CDM tbl, codeset, etc) will not appear in the final
 #'            summary
 #'
-#' @return output_type string to be piped into a descriptive message at the end of the core function
-#'         to inform users what should be used as the `output_function` argument in the output
-#'         function
+#' @return a vector with information about which parameters will be required to use
+#'         the *_output function for each module; intended to be fed into a cli message
+#'         command to generate a console message
 #'
 #' @examples
 #' # intended for use inside the *_process functions
@@ -88,15 +88,29 @@ param_summ <- function(check_string, ...){
   time <- df %>% filter(param == 'time') %>%
     mutate(v = ifelse(value == TRUE, 'la', 'cs')) %>% distinct(v) %>% pull()
 
-  output_type <- paste0(check_string, '_', site_type, '_', exp_anom, '_', time)
+  output_type <- paste0(site_type, '_', exp_anom, '_', time)
+  output_string <- paste0(check_string, '_', site_type, '_', exp_anom, '_', time)
 
-  # df_final <- df %>%
-  #   add_row(param = 'output_function',
-  #           value = output_type)
+  output_ref <- readr::read_csv(paste0(system.file("extdata", package = 'squba.gen'),
+                                       '/output_parameter_reqs.csv'))
 
-  #output_tbl(df_final, 'parameter_summary', file = TRUE)
+  output_vector <- output_ref %>%
+    filter(module == check_string & check == output_type) %>%
+    select(-c(module, check)) %>%
+    pivot_longer(cols = 1:3) %>%
+    filter(!is.na(value)) %>%
+    mutate(name_cat = paste0(paste0(cli::style_bold(cli::col_blue(name)), ": ", value))) %>%
+    pull(name_cat)
 
-  return(output_type)
+  opt_list <- list('vector' = output_vector,
+                   'string' = output_string)
+
+  return(opt_list)
+
+  # cli::boxx(c('You can optionally use this dataframe in the accompanying',
+  # '`scv_output` function. Here are the parameters you will need:', '', vec1, '',
+  # 'See ?scv_output for more details.'), padding = c(0,1,0,1),
+  # header = cli::col_cyan('Output Function Details'))
 
 }
 
