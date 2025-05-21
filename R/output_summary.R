@@ -102,9 +102,10 @@ param_summ <- function(check_string, ...){
     mutate(name_cat = paste0(paste0(cli::style_bold(cli::col_blue(name)), ": ", value))) %>%
     pull(name_cat)
 
-  add_output_type <- output_vector %>% append(output_string)
+  opt_list <- list('vector' = output_vector,
+                   'string' = output_string)
 
-  return(add_output_type)
+  return(opt_list)
 
   # cli::boxx(c('You can optionally use this dataframe in the accompanying',
   # '`scv_output` function. Here are the parameters you will need:', '', vec1, '',
