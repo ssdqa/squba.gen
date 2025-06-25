@@ -9,7 +9,8 @@ test_that('loop through visits omop', {
     test <- input_tbl %>%
       inner_join(cohort) %>%
       group_by(site) %>%
-      summarise(n_row = n())
+      summarise(n_row = n()) %>%
+      collect()
 
     print(test$n_row)
 
@@ -36,20 +37,20 @@ test_that('loop through visits omop', {
 
   expect_no_error(
     loop_through_visits(cohort_tbl = cohort,
-                       omop_or_pcornet = 'omop',
-                       check_func = function(cht, t){
-                                   mock_function(cohort = cht,
-                                                 input_tbl = t)},
-                       site_col = 'site',
-                       time = FALSE,
-                       visit_type_tbl = visit_types,
-                       visit_list = c('outpatient'),
-                       visit_tbl = cdm_tbl('visit_occurrence'),
-                       site_list = c('synth2'),
-                       grouped_list = c('person_id','start_date','end_date',
-                                       'site'),
-                       domain_tbl = domains %>% dplyr::filter(domain == 'diagnoses'))
-    )
+                        omop_or_pcornet = 'omop',
+                        check_func = function(cht, t){
+                          mock_function(cohort = cht,
+                                        input_tbl = t)},
+                        site_col = 'site',
+                        time = FALSE,
+                        visit_type_tbl = visit_types,
+                        visit_list = c('outpatient'),
+                        visit_tbl = cdm_tbl('visit_occurrence'),
+                        site_list = c('synth2'),
+                        grouped_list = c('person_id','start_date','end_date',
+                                         'site'),
+                        domain_tbl = domains %>% dplyr::filter(domain == 'diagnoses'))
+  )
 
   expect_no_error(
     loop_through_visits(cohort_tbl = cohort,
@@ -102,7 +103,8 @@ test_that('loop through visits pcornet', {
     test <- input_tbl %>%
       inner_join(cohort) %>%
       group_by(site) %>%
-      summarise(n_row = n())
+      summarise(n_row = n()) %>%
+      collect()
 
     print(test$n_row)
 
@@ -165,7 +167,8 @@ test_that('fot loop', {
     test <- input_tbl %>%
       inner_join(cohort) %>%
       group_by(site, time_start) %>%
-      summarise(n_row = n())
+      summarise(n_row = n()) %>%
+      collect()
 
     print(test$n_row)
 
