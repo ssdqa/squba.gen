@@ -9,7 +9,8 @@ test_that('loop through visits omop', {
     test <- input_tbl %>%
       inner_join(cohort) %>%
       group_by(site) %>%
-      summarise(n_row = n())
+      summarise(n_row = n()) %>%
+      collect()
 
     print(test$n_row)
 
@@ -102,7 +103,8 @@ test_that('loop through visits pcornet', {
     test <- input_tbl %>%
       inner_join(cohort) %>%
       group_by(site) %>%
-      summarise(n_row = n())
+      summarise(n_row = n()) %>%
+      collect()
 
     print(test$n_row)
 
@@ -165,7 +167,8 @@ test_that('fot loop', {
     test <- input_tbl %>%
       inner_join(cohort) %>%
       group_by(site, time_start) %>%
-      summarise(n_row = n())
+      summarise(n_row = n()) %>%
+      collect()
 
     print(test$n_row)
 

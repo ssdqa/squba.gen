@@ -258,7 +258,11 @@ generate_ref_table <- function(tbl,
 #'
 make_interactive_squba <- function(ggplot_obj){
 
-  grph_meta <- ggplot_obj[['metadata']]
+  if(any(class(ggplot_obj) %in% 'patchwork')){
+    grph_meta <- ggplot_obj[[1]][['metadata']]
+  }else{
+    grph_meta <- ggplot_obj[['metadata']]
+  }
 
   if(!is.null(grph_meta)){
 
