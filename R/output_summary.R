@@ -41,7 +41,11 @@ join_to_vocabulary <- function(tbl,
       rename_with(~col, join_col) %>%
       collect()
   }else{
-    final <- tbl %>% mutate(concept_name = 'No vocabulary table input')
+    if('concept_name' %in% colnames(tbl)){
+      final <- tbl
+    }else{
+      final <- tbl %>% mutate(concept_name = 'No vocabulary table input')
+    }
   }
 }
 
