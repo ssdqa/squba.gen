@@ -165,7 +165,12 @@ prepare_cohort <- function(cohort_tbl,
                            codeset = NULL,
                            omop_or_pcornet) {
 
-  ct <- copy_to_new(df = cohort_tbl)
+
+  if(any(class(cohort_tbl) %in% 'tbl_sql')){
+    ct <- cohort_tbl
+  }else{
+    ct <- copy_to_new(df = cohort_tbl)
+  }
 
   stnd <-
     ct %>%
