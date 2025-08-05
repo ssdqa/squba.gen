@@ -40,7 +40,7 @@ check_site_type <- function(cohort,
 
     # count number of sites in site list that also exist in the cohort
     n_site <- cohort %>% select(site) %>%
-      summarise(n = n_distinct(site)) %>% pull(n)
+      summarise(nst = n_distinct(site)) %>% pull(nst)
 
     if(multi_or_single_site == 'single' && n_site > 1){
       # create new "summary" site column / name, add that to grouped list
