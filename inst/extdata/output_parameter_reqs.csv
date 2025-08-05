@@ -61,3 +61,11 @@ cnc_sp,ss_anom_cs,"cnc_sp_process_output, cnc_sp_process_names",p_value,"facet_v
 cnc_sp,ss_anom_la,"cnc_sp_process_output, cnc_sp_process_names","top_n, specialty_filter",facet_vars
 cnc_sp,ms_anom_cs,"cnc_sp_process_output, cnc_sp_process_names",p_value,"facet_vars, specialty_filter"
 cnc_sp,ms_anom_la,"cnc_sp_process_output, cnc_sp_process_names",specialty_filter,facet_vars
+qvd,ss_exp_cs,process_output,,"display_outliers, frequency_min, value_type_filter"
+qvd,ss_exp_la,process_output,summary_stat,value_type_filter
+qvd,ms_exp_cs,process_output,,"display_outliers, frequency_min, value_type_filter"
+qvd,ms_exp_la,process_output,summary_stat,value_type_filter
+qvd,ss_anom_cs,process_output,,
+qvd,ss_anom_la,process_output,,value_type_filter
+qvd,ms_anom_cs,process_output,,value_type_filter
+qvd,ms_anom_la,process_output,value_type_filter,
