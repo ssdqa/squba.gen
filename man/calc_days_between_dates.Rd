@@ -24,7 +24,8 @@ dates
 }
 \description{
 Function to get sql code for number of days between date1 and date2.
-Adapted for sql dialects for Postgres and MS SQL.
+Adapted for sql dialects for Postgres, MSSQL, Snowflake, Oracle, BigQuery,
+Presto, & Spark.
 }
 \details{
 Should always be wrapped by sql()

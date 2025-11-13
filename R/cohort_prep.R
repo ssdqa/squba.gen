@@ -261,7 +261,8 @@ build_birth_date <- function(cohort,
 #' Calculate Date Differences in Multiple SQL Backends
 #'
 #' Function to get sql code for number of days between date1 and date2.
-#' Adapted for sql dialects for Postgres and MS SQL.
+#' Adapted for sql dialects for Postgres, MSSQL, Snowflake, Oracle, BigQuery,
+#' Presto, & Spark.
 #'
 #' Should always be wrapped by sql()
 #' @param date_col_1 Date col 1
@@ -280,20 +281,39 @@ calc_days_between_dates <-
         paste0("DATEDIFF(day, ", date_col_1, ", ", date_col_2, ")")
     } else if (class(db)[1] == "Snowflake") {
       sql_code <-
-        paste0("DATEDIFF(day, ",'"',date_col_1,'"',", ",'"',date_col_2,'"',")")
+        paste0(
+          "DATEDIFF(day, ",
+          '"',
+          date_col_1,
+          '"',
+          ", ",
+          '"',
+          date_col_2,
+          '"',
+          ")"
+        )
     } else if (class(db)[1] == "Oracle") {
-      sql_code <- paste0('("', date_col_2, '" - "', date_col_1, '")')
+      sql_code <- paste0(
+        'TRUNC("',
+        date_col_2,
+        '") - TRUNC("',
+        date_col_1,
+        '")'
+      )
     } else if (class(db)[1] == "src_BigQueryConnection") {
-      sql_code <- paste0("DATE_DIFF(",date_col_1,", ",date_col_2,", DAY)")
-    } else if(class(db) %in% 'SQLiteConnection'){
+      sql_code <- paste0("DATE_DIFF(", date_col_1, ", ", date_col_2, ", DAY)")
+    } else if (class(db) %in% 'SQLiteConnection') {
       sql_code <-
         paste0("julianday(", date_col_2, ") - julianday(", date_col_1, ")")
-    }else if(class(db) %in% 'PrestoConnection'){
+    } else if (class(db) %in% 'PrestoConnection') {
       sql_code <-
-        paste0("date_diff('day', ", date_col_1, ", ", date_col_2, ")")
+        paste0("date_diff(day, ", date_col_1, ", ", date_col_2, ")")
+    } else if (class(db)[1] %in% 'Spark SQL') {
+      sql_code <-
+        paste0("datediff(", date_col_2, ",", date_col_1, ")")
     } else {
       sql_code <-
-        paste0(date_col_2, " - ", date_col_1)
+        paste0(date_col_2, "::date", " - ", date_col_1, "::date")
     }
     return(sql_code)
   }
