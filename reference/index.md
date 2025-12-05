@@ -1,0 +1,66 @@
+# Package index
+
+## Create your argos session
+
+- [`initialize_dq_session()`](https://ssdqa.github.io/squba.gen/reference/initialize_dq_session.md)
+  : Initialize argos Session for squba Analysis
+
+## Cohort Preparation
+
+- [`prepare_cohort()`](https://ssdqa.github.io/squba.gen/reference/prepare_cohort.md)
+  : Prepare Cohort
+- [`build_birth_date()`](https://ssdqa.github.io/squba.gen/reference/build_birth_date.md)
+  : Build birth_date Column
+- [`check_site_type()`](https://ssdqa.github.io/squba.gen/reference/check_site_type.md)
+  : Check Site Type
+- [`replace_site_col()`](https://ssdqa.github.io/squba.gen/reference/replace_site_col.md)
+  : Replace Summary Site Column
+
+## Anomaly Detection
+
+- [`compute_dist_mean_median()`](https://ssdqa.github.io/squba.gen/reference/compute_dist_mean_median.md)
+  : Compute Distance from Mean & Median
+- [`ms_anom_euclidean()`](https://ssdqa.github.io/squba.gen/reference/ms_anom_euclidean.md)
+  : Euclidean Distance Computation
+- [`anomalize_ss_anom_la()`](https://ssdqa.github.io/squba.gen/reference/anomalize_ss_anom_la.md)
+  : STL Regression Anomaly Detection
+- [`compute_dist_anomalies()`](https://ssdqa.github.io/squba.gen/reference/compute_dist_anomalies.md)
+  : Hotspots Anomaly Detection Eligibility Determination
+- [`detect_outliers()`](https://ssdqa.github.io/squba.gen/reference/detect_outliers.md)
+  : Hotspots Anomaly Detection
+- [`compute_jaccard()`](https://ssdqa.github.io/squba.gen/reference/compute_jaccard.md)
+  : Jaccard Index Anomaly Detection
+
+## Fact Loops
+
+- [`compute_fot()`](https://ssdqa.github.io/squba.gen/reference/compute_fot.md)
+  : Compute Facts Over Time
+- [`loop_through_visits()`](https://ssdqa.github.io/squba.gen/reference/loop_through_visits.md)
+  : Patient Facts per Visit Type
+
+## Output Summarization
+
+- [`join_to_vocabulary()`](https://ssdqa.github.io/squba.gen/reference/join_to_vocabulary.md)
+  : Join to a reference vocabulary table
+
+- [`generate_ref_table()`](https://ssdqa.github.io/squba.gen/reference/generate_ref_table.md)
+  : Create a summary concept reference table
+
+- [`param_summ()`](https://ssdqa.github.io/squba.gen/reference/param_summ.md)
+  : Generate output_function identifier & build output instructions
+
+- [`make_interactive_squba()`](https://ssdqa.github.io/squba.gen/reference/make_interactive_squba.md)
+  :
+
+  Make `squba` outputs interactive
+
+## Data Visualization
+
+- [`squba_colors_standard`](https://ssdqa.github.io/squba.gen/reference/squba_colors_standard.md)
+  : SQUBA Standard Color Hexes
+- [`squba_palettes_standard`](https://ssdqa.github.io/squba.gen/reference/squba_palettes_standard.md)
+  : SQUBA Standard Color Palettes
+- [`scale_fill_squba()`](https://ssdqa.github.io/squba.gen/reference/scale_fill_squba.md)
+  : squba Fill Scale Constructor
+- [`scale_color_squba()`](https://ssdqa.github.io/squba.gen/reference/scale_color_squba.md)
+  : squba Color Scale Constructor
