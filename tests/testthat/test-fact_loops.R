@@ -1,4 +1,5 @@
 
+library(patientfacts)
 
 test_that('loop through visits omop', {
 
