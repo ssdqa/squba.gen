@@ -1,4 +1,4 @@
-# squba.gen
+# Support Functions for the `squba` Ecosystem
 
 The `squba.gen` package contains an array of support functions used in
 each of the modules throughout the `squba` ecosystem. These range from
