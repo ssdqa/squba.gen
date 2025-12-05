@@ -38,8 +38,8 @@ This function will, for each group in a dataframe, identify groups that are elig
 for anomaly detection analysis by examining the values in the \code{var_col}.
 The following conditions will disqualify a group from the anomaly detection analysis:
 (1) Mean < 0.02 or Median < 0.01
-(3) Mean value < 0.05 and range < 0.01
-(4) Coefficient of variance < 0.1 and sample size < 11
+(2) Mean value < 0.05 and range < 0.01
+(3) Coefficient of variance < 0.1 and sample size < 11
 If no groups meet this criteria, a warning will display in the console indicating
 that no groups were eligible.
 }

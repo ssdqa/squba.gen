@@ -1,0 +1,45 @@
+url: https://ssdqa.github.io/squba.gen/
+template:
+  bootstrap: 5
+  light-switch: true
+navbar:
+  left:
+  - text: 'squba Home'
+    href: https://ssdqa.github.io/squba/
+  - text: 'Reference'
+    href: reference/index.html
+reference:
+- title: Create your argos session
+  contents:
+  - initialize_dq_session
+- title: Cohort Preparation
+  contents:
+  - prepare_cohort
+  - build_birth_date
+  - check_site_type
+  - replace_site_col
+- title: Anomaly Detection
+  contents:
+  - compute_dist_mean_median
+  - ms_anom_euclidean
+  - anomalize_ss_anom_la
+  - compute_dist_anomalies
+  - detect_outliers
+  - compute_jaccard
+- title: Fact Loops
+  contents:
+  - compute_fot
+  - loop_through_visits
+- title: Output Summarization
+  contents:
+  - join_to_vocabulary
+  - generate_ref_table
+  - param_summ
+  - make_interactive_squba
+- title: Data Visualization
+  contents:
+  - squba_colors_standard
+  - squba_palettes_standard
+  - scale_fill_squba
+  - scale_color_squba
+
