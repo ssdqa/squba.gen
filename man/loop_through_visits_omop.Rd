@@ -13,7 +13,6 @@ loop_through_visits_omop(
   visit_tbl = cdm_tbl("visit_occurrence"),
   site_list,
   visit_list = c("inpatient", "outpatient"),
-  grouped_list = c("person_id", "start_date", "end_date", "fu", "site"),
   domain_tbl
 )
 }
@@ -48,8 +47,6 @@ within the file if multiple visit_concept_ids/enc_types represent the visit type
 
 \item{visit_list}{the list of visit types to iterate through}
 
-\item{grouped_list}{the input for which to group variables}
-
 \item{domain_tbl}{a table that defines the domains where facts should be identified with the following columns:
 \itemize{
 \item \code{domain}: a string label for the domain being examined (i.e. prescription drugs)
@@ -64,3 +61,4 @@ given visit type from visit_list
 \description{
 Patient Facts per Visit Type -- OMOP
 }
+\keyword{internal}

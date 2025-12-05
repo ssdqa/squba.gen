@@ -2,23 +2,29 @@
 % Please edit documentation in R/colors.R
 \name{scale_fill_squba}
 \alias{scale_fill_squba}
-\title{SQUBA Fill Scale Constructor}
+\title{squba Fill Scale Constructor}
 \usage{
 scale_fill_squba(palette = "main", discrete = TRUE, reverse = FALSE, ...)
 }
 \arguments{
-\item{palette}{Character name of palette in squba_palettes_standard
-If no palette specified, defaults to "main" palette}
+\item{palette}{\emph{string} || defaults to \code{main}
 
-\item{discrete}{Boolean indicating whether fill aesthetic is discrete or not}
+The name of the palette as it appears in \code{squba_palettes_standard}}
 
-\item{reverse}{Boolean indicating whether the palette should be reversed}
+\item{discrete}{\emph{boolean} || defaults to \code{TRUE}
 
-\item{...}{Additional arguments passed to discrete_scale() or
-scale_color_gradientn(), used respectively when discrete is TRUE or FALSE}
+A boolean indicating whether the fill aesthetic is discrete or not}
+
+\item{reverse}{\emph{boolean} || defaults to \code{FALSE}
+
+A boolean indicating whether the palette should be reversed}
+
+\item{...}{Any additional arguments passed to \link[ggplot2:discrete_scale]{ggplot2::discrete_scale} or
+\link[ggplot2:scale_gradient]{ggplot2::scale_fill_gradientn}, used respectively when
+discrete is TRUE or FALSE}
 }
 \description{
-This function will operate with ggplot objects to use the SQUBA
+This function will operate with ggplot objects to use the \code{squba}
 standard colors/color palettes to add fill to graphs
 }
 \examples{

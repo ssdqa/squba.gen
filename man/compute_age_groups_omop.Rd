@@ -20,3 +20,4 @@ age allowed for a group and provides a string name for the group}
 \description{
 Age at Cohort Entry -- OMOP
 }
+\keyword{internal}

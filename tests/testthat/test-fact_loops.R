@@ -47,8 +47,6 @@ test_that('loop through visits omop', {
                         visit_list = c('outpatient'),
                         visit_tbl = cdm_tbl('visit_occurrence'),
                         site_list = c('synth2'),
-                        grouped_list = c('person_id','start_date','end_date',
-                                         'site'),
                         domain_tbl = domains %>% dplyr::filter(domain == 'diagnoses'))
   )
 
@@ -67,8 +65,6 @@ test_that('loop through visits omop', {
                                  visit_detail_start_date = visit_start_date,
                                  visit_detail_concept_id = visit_concept_id),
                         site_list = c('synth2'),
-                        grouped_list = c('person_id','start_date','end_date',
-                                         'site'),
                         domain_tbl = domains %>% dplyr::filter(domain == 'diagnoses'))
   )
 
@@ -84,8 +80,6 @@ test_that('loop through visits omop', {
                         visit_list = c('outpatient'),
                         visit_tbl = cdm_tbl('visit_occurrence'),
                         site_list = c('synth2'),
-                        grouped_list = c('person_id','start_date','end_date',
-                                         'site'),
                         domain_tbl = domains %>% dplyr::filter(domain == 'diagnoses'))
   )
 
@@ -147,8 +141,6 @@ test_that('loop through visits pcornet', {
                                  admit_date = visit_start_date,
                                  encounterid = visit_occurrence_id),
                         site_list = c('synth2'),
-                        grouped_list = c('person_id','start_date','end_date',
-                                         'site'),
                         domain_tbl = domains %>% dplyr::filter(domain == 'diagnoses'))
   )
 

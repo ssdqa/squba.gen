@@ -28,3 +28,4 @@ associated facts from the original cj_tbl input
 \description{
 Create a cross-joined master table for variable reference
 }
+\keyword{internal}

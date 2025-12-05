@@ -4,39 +4,48 @@
 \alias{prepare_cohort}
 \title{Prepare Cohort}
 \usage{
-prepare_cohort(cohort_tbl, age_groups = NULL, codeset = NULL, omop_or_pcornet)
+prepare_cohort(cohort_tbl, age_groups = NULL, omop_or_pcornet)
 }
 \arguments{
-\item{cohort_tbl}{table with required fields for each member of the cohort}
+\item{cohort_tbl}{\emph{tabular input} || \strong{required}
 
-\item{age_groups}{option to read in a table with age group designations to allow for stratification
-by age group in output. defaults to \code{NULL}.}
+The cohort to be used for data quality testing. This table should contain,
+at minimum:
+\itemize{
+\item \code{site} | \emph{character} | the name(s) of institutions included in your cohort
+\item \code{person_id} / \code{patid} | \emph{integer / character} | the patient identifier
+\item \code{start_date} | \emph{date} | the start of the cohort period
+\item \code{end_date} | \emph{date} | the end of the cohort period
+}}
 
-\item{codeset}{option to read in a table with codeset metadata to allow for labelling of
-cohort members based on a user-provided codeset. the codeset itself should be
-a table with at least a \code{concept_id} column and a \code{flag} column with user-provided
-labels.}
+\item{age_groups}{\emph{tabular input} || defaults to \code{NULL}
 
-\item{omop_or_pcornet}{string indicating the appropriate backend CDM (\code{omop} or \code{pcornet})}
+If you would like to stratify the results by age group, create a table or
+CSV file with the following columns and use it as input to this parameter:
+\itemize{
+\item \code{min_age} | \emph{integer} | the minimum age for the group (i.e. 10)
+\item \code{max_age} | \emph{integer} | the maximum age for the group (i.e. 20)
+\item \code{group} | \emph{character} | a string label for the group (i.e. 10-20, Young Adult, etc.)
+}
+
+If you would \emph{not} like to stratify by age group, leave as \code{NULL}}
+
+\item{omop_or_pcornet}{\emph{string} || \strong{required}
+
+A string, either \code{omop} or \code{pcornet}, indicating the CDM format of the data}
 }
 \value{
-a tbl with person_id and the following:
-\code{start_date} the cohort entry date
-\code{end_date} the last visit
-\code{fu}: length of follow up
-\code{site} : patient site
-if age_groups is not NULL:
-\code{age_ce}: patient age at cohort entry
-\code{age_grp}: user-provided age grouping
-if codeset is not NULL:
-\code{flag}: flag that indiciates patient is a member of a user-specified group in the codeset
+This function will return the same input cohort table with the addition of
+the column \code{fu}, which includes the length of patient follow-up based on the
+provided start & end dates. Optionally, if age_groups is not NULL, the output
+will also include \code{age_ce} (patient age at cohort entry) and \code{age_grp}
+(the user-provided age group category)
 }
 \description{
 For the cohort table input into any of the *_process functions, this function
 will prepare that cohort for the rest of the analysis. This includes computing
 follow-up based on start and end dates and computing age at cohort entry categorized
-into user-provided groups. Note that the cohort table must have columns:
-\code{site}, \code{person_id}, \code{start_date}, \code{end_date}
+into user-provided groups.
 }
 \examples{
 \dontrun{

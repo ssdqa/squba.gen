@@ -7,25 +7,40 @@
 compute_dist_mean_median(tbl, grp_vars, var_col, num_sd, num_mad)
 }
 \arguments{
-\item{tbl}{table with at least the vars specified in \code{grp_vars} and \code{var_col}}
+\item{tbl}{\emph{tabular input} || \strong{required}
 
-\item{grp_vars}{variables to group by when computing summary statistics}
+A table with the target numerical variable (\code{var_col}) for the analysis
+and each of the required grouping variables (\code{grp_vars})}
 
-\item{var_col}{column to compute summary statistics on}
+\item{grp_vars}{\emph{string or vector} || \strong{required}
 
-\item{num_sd}{(integer) number of standard deviations away from the mean
-from which to compute the sd_lower and sd_upper columns}
+The name of the variable(s) to group by when computing summary statistics}
 
-\item{num_mad}{(integer) number of median absolute deviations away from the median
-from which to compute the mad_lower and mad_upper columns}
+\item{var_col}{\emph{string} || \strong{required}
+
+The name of the numeric variable that should be the target of summary
+statistic computations}
+
+\item{num_sd}{\emph{integer} || \strong{required}
+
+The number of standard deviations away from the mean that should be used
+as the lower and upper bounds for outlier detection. Values falling, for
+example, over 2 standard deviations above or below the mean would be
+considered outliers.}
+
+\item{num_mad}{\emph{integer} || \strong{required}
+
+The number of median absolute deviations (MADs) away from the median that
+should be used as lower and upper bounds. Outliers are not formally identified
+based on the median, but the information will be available in the final
+table should you prefer that method.}
 }
 \value{
-a table where, for each group in \code{grp_vars}, the following statistics are computed
-based on the \code{var_col}: mean, sd, sd_lower, sd_upper, mad, mad_lower, mad_upper,
-anomaly_yn (indicator of whether data point is +/- num_sd from mean or data point is > 90th percentile),
-abs_diff_mean (absolute value of difference between mean for group and observation),
-abs_diff_median (absolute value of difference between median for group and observation),
-n_mad (the number of MAD away from the median where the data point falls)
+A table where, for each group in \code{grp_vars}, various summary statistics like the
+mean, median, standard deviation, MAD, and others, are computed based on the
+\code{var_col}. Outliers are identified in the \code{anomaly_yn} column based on whether
+the data point is +/- \code{num_sd} from the mean or the data point is > the 90th
+percentile.
 }
 \description{
 This function will, for the values in a given \code{var_col}, compute the

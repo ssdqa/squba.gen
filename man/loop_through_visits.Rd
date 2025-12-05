@@ -13,59 +13,96 @@ loop_through_visits(
   visit_type_tbl,
   visit_tbl,
   site_list,
-  visit_list = c("inpatient", "outpatient"),
-  grouped_list = c("person_id", "start_date", "end_date", "fu", "site"),
+  visit_list = c("outpatient", "inpatient"),
   domain_tbl
 )
 }
 \arguments{
-\item{cohort_tbl}{a table with members of the cohort that has been run through \code{\link[=prepare_cohort]{prepare_cohort()}}}
+\item{cohort_tbl}{\emph{tabular input} || \strong{required}
 
-\item{omop_or_pcornet}{string indicating the appropriate CDM backend (\code{omop} or \code{pcornet})}
-
-\item{check_func}{the base function for the check that needs to be executed across time; this argument
-should be structured as the following, where cht is the cohort and t is the input data
-for the function:
-
-\if{html}{\out{<div class="sourceCode">}}\preformatted{              function(cht, t)\{check_function(param1 = cht, param2 = t, param3 = param3_input, ...,
-              paramX = paramX_input)\}
-
-              all parameters for the base check function should be included if any defaults are not being
-              used
-}\if{html}{\out{</div>}}}
-
-\item{site_col}{the column in the data where the site variable can be found}
-
-\item{time}{a logical indicating whether the analysis is being conducted longitudinally}
-
-\item{visit_type_tbl}{a table that defines available visit types that are called in \code{visit_types.}:
+The cohort to be used for data quality testing. This table should contain,
+at minimum:
 \itemize{
-\item \code{visit_concept_id} / \code{visit_detail_concept_id}: the visit_(detail)_concept_id that represents the visit type of interest (i.e. 9201 or IP)
-\item \code{visit_type}: the string label to describe the visit type; this label can be used multiple times
-within the file if multiple visit_concept_ids/enc_types represent the visit type
+\item \code{site} | \emph{character} | the name(s) of institutions included in your cohort
+\item \code{person_id} / \code{patid} | \emph{integer} / \emph{character} | the patient identifier
+\item \code{start_date} | \emph{date} | the start of the cohort period
+\item \code{end_date} | \emph{date} | the end of the cohort period
+}
+
+Note that the start and end dates included in this table will be used to
+limit the search window for the analyses in this module. It is recommended that
+this table has been passed through the \link{prepare_cohort} function as well.}
+
+\item{omop_or_pcornet}{\emph{string} || \strong{required}
+
+A string, either \code{omop} or \code{pcornet}, indicating the CDM format of the data
+\itemize{
+\item \code{omop}: run the \code{\link[=loop_through_visits_omop]{loop_through_visits_omop()}} function against an OMOP CDM instance
+\item \code{pcornet}: run the \code{\link[=loop_through_visits_pcnt]{loop_through_visits_pcnt()}} function against a PCORnet CDM instance
 }}
 
-\item{visit_tbl}{the cdm encounter or visit_occurrence or visit_detail tbl}
+\item{check_func}{\emph{function} || \strong{required}
 
-\item{site_list}{the sites to iterate through}
+The function that should be executed within each time period in the loop. This
+parameter should be structured as the following, where \code{cht} is the cohort table
+and \code{t} is the input data for the function:
 
-\item{visit_list}{the list of visit types to iterate through}
+\code{function(cht, t){check_function(param1 = cht, param2 = t, param3 = param3_input, ..., paramX = paramX_input)}}
 
-\item{grouped_list}{the input for which to group variables}
+Make sure to include all parameters required for the original function where
+default values are not being used.}
 
-\item{domain_tbl}{a table that defines the domains where facts should be identified with the following columns:
+\item{site_col}{\emph{string} || \strong{required}
+
+The name of the column in the cohort table that contains the site names. This
+will typically be either \code{site} or \code{site_summ}}
+
+\item{time}{\emph{boolean} || defaults to \code{FALSE}
+
+A boolean to indicate whether to execute a longitudinal analysis}
+
+\item{visit_type_tbl}{\emph{tabular input} || \strong{required}
+
+A table that defines visit types of interest called in \code{visit_list.} This input
+should contain:
 \itemize{
-\item \code{domain}: a string label for the domain being examined (i.e. prescription drugs)
-\item \code{domain_tbl}: the CDM table where information for this domain can be found (i.e. drug_exposure)
-\item \code{filter_logic}: an optional string to be parsed as logic to filter the domain_tbl as needed to best represent the domain
+\item \code{visit_concept_id} / \code{visit_detail_concept_id} or \code{enc_type} | \emph{integer} or \emph{character} | the \verb{visit_(detail)_concept_id} or \code{enc_type} that represents the visit type of interest (i.e. 9201 or IP)
+\item \code{visit_type} | \emph{character} | the string label to describe the visit type
+}}
+
+\item{visit_tbl}{\emph{tabular input} || defaults to \code{cdm_tbl('visit_occurrence')}
+
+The CDM table with visit information (i.e. visit_occurrence or encounter)}
+
+\item{site_list}{\emph{list} || \strong{required}
+
+A list of sites for which you would like to examine clinical facts. Can be one site
+(single-site) or multiple (multi-site). Ensure that all sites listed here exist
+in the provided cohort table.}
+
+\item{visit_list}{\emph{string or vector} || defaults to \code{c('outpatient', 'inpatient')}
+
+A string or vector of visit types by which the output should be stratified. Each
+visit type listed in this parameter should match an associated visit type defined
+in the \code{visit_type_tbl}}
+
+\item{domain_tbl}{\emph{tabular input} || \strong{required}
+
+A table that defines the fact domains to be investigated in the analysis. This
+input should contain:
+\itemize{
+\item \code{domain} | \emph{character} | a string label for the domain being examined (i.e. prescription drugs)
+\item \code{domain_tbl} | \emph{character} | the CDM table where information for this domain can be found (i.e. drug_exposure)
+\item \code{filter_logic} | \emph{character} | logic to be applied to the domain_tbl in order to achieve the definition of interest; should be written as if you were applying it in a dplyr::filter command in R
 }}
 }
 \value{
-a list of dataframes with median number of facts per patient for all domains in domain_tbl, where each dataframe is specific to a
-given visit type from visit_list
+This function will return a list of dataframes with the median number of facts per
+patient for all domains in \code{domain_tbl}, where each dataframe is specific to a
+given visit type from \code{visit_list}
 }
 \description{
-This function will loop through each site and visit type provided to and execute
+This function will loop through each site and visit type provided and execute
 the provided check function to compute facts stratified by visit type. Primarily intended
 for use in the Patient Facts module, but can be adapted for use elsewhere.
 }
@@ -110,8 +147,6 @@ loop_through_visits(cohort_tbl = cohort,
                     visit_tbl = cdm_tbl('visit_occurrence'),
                     site_list = c('Site A', 'Site B'),
                     visit_list = c('outpatient'),
-                    grouped_list = c('person_id','start_date','end_date',
-                                     'site'),
                     domain_tbl = sample_domains)
 
 

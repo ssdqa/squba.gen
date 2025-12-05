@@ -2,28 +2,41 @@
 % Please edit documentation in R/output_summary.R
 \name{generate_ref_table}
 \alias{generate_ref_table}
-\title{Create Concept Reference Table}
+\title{Create a summary concept reference table}
 \usage{
 generate_ref_table(tbl, id_col, name_col, denom, time = FALSE)
 }
 \arguments{
-\item{tbl}{intermediate table generated in the output function that contains the concepts
+\item{tbl}{\emph{tabular input} || \strong{required}
+
+A table, typically generated within an *_output function, that contains the concepts
 of interest to be displayed in the reference table}
 
-\item{id_col}{the name of the column with the concept that needs to be summarised in the
+\item{id_col}{\emph{string} || \strong{required}
+
+The name of the column with the concepts to be summarized in the
 reference table}
 
-\item{name_col}{the name of the column with the concept name associated with the concept in
+\item{name_col}{\emph{string} || \strong{required}
+
+The name of the column with the concept name associated with the concept in
 \code{id_col}}
 
-\item{denom}{the denominator count associated with @id_col to be displayed in the
-reference table}
+\item{denom}{\emph{string} || \strong{required}
 
-\item{time}{logical to define whether @tbl has over time output or not}
+The name of the column with a denominator count (or any numerical value)
+associated with \code{id_col} to be displayed in the reference table}
+
+\item{time}{\emph{boolean} || defaults to \code{FALSE}
+
+A boolean indicating whether the input data is stratified by time. For over time
+analyses, the provided denom column will be summed across the entire time period
+and an all-time value will be displayed.}
 }
 \value{
-a reference table with summary information about the codes in the output that
-could not be displayed in the associated graph
+A gt reference table with summary information about the concepts included
+in the provided table. This is typically included as a complement to other
+graphical output.
 }
 \description{
 For several SQUBA modules, this function is used to create a summary reference

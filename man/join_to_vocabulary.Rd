@@ -2,28 +2,39 @@
 % Please edit documentation in R/output_summary.R
 \name{join_to_vocabulary}
 \alias{join_to_vocabulary}
-\title{Join to OMOP Vocabulary Table}
+\title{Join to a reference vocabulary table}
 \usage{
 join_to_vocabulary(tbl, vocab_tbl, col, vocab_col = "concept_id")
 }
 \arguments{
-\item{tbl}{data table to which the vocabulary table should be joined}
+\item{tbl}{\emph{tabular input} || \strong{required}
 
-\item{vocab_tbl}{location of the vocabulary table}
+A table to which the vocabulary table should be joined}
 
-\item{col}{the column that should be used in the \code{by} statement to join
-to the vocab_col in the vocabulary table}
+\item{vocab_tbl}{\emph{tabular input} || \strong{required}
 
-\item{vocab_col}{the column in the vocabulary table that should be used to join
-to the \code{tbl}}
+The reference vocabulary table (ex: the OMOP \code{concept} table). This
+table should minimally contain the provided \code{vocab_col}, \code{concept_name},
+and \code{vocabulary_id}}
+
+\item{col}{\emph{string} || \strong{required}
+
+The name of the column in \code{tbl} that should be used in the \code{by} statement
+to join to the \code{vocab_col} in the vocabulary table}
+
+\item{vocab_col}{\emph{string} || defaults to \code{concept_id}
+
+The name of the column in \code{vocab_tbl} that should be used in the \code{by} statement
+to join to the \code{col} in the provided data table}
 }
 \value{
-the dataframe provided in \code{tbl} with the addition of the concept name
-column
+This function will return the dataframe provided in \code{tbl} with the
+addition of the \code{concept_name} associated with each concept
 }
 \description{
-This is a convenience function that allows users to join to an OMOP
-vocabulary table (most likely the \code{concept} table)
+This is a convenience function that allows users to join to a reference
+vocabulary table (most likely the OMOP \code{concept} table). It is intended
+to pull in the full name of a concept and facilitate the review of results.
 }
 \examples{
 \dontrun{

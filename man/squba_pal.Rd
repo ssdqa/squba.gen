@@ -20,3 +20,4 @@ example usage: squba_pal("beachy")(10)
 \description{
 Return function to interpolate a color palette
 }
+\keyword{internal}

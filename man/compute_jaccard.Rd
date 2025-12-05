@@ -2,25 +2,36 @@
 % Please edit documentation in R/anomaly_detection.R
 \name{compute_jaccard}
 \alias{compute_jaccard}
-\title{Jaccard Index Computation}
+\title{Jaccard Index Anomaly Detection}
 \usage{
 compute_jaccard(jaccard_input_tbl, var_col, omop_or_pcornet)
 }
 \arguments{
-\item{jaccard_input_tbl}{tbl that will undergo jaccard index computation;
-the requirement is that it contains at least two columns: \code{person_id}/\code{patid} and a variable column
-where each row represents an instance where a specific variable is used for a given patient
-Alternatively, it can be a list of all unique \code{person_id}/\code{patid} and variable combinations}
+\item{jaccard_input_tbl}{\emph{tabular input} || \strong{required}
 
-\item{var_col}{the column within \code{jaccard_input_table} that contains all the concepts that should be compared to each other}
+A table that contains at least \code{person_id}/\code{patid} and a variable column, and
+where each row represents a unique instance where the variable occurred for
+a given patient
 
-\item{omop_or_pcornet}{indication of which CDM should be used - either \code{omop} or \code{pcornet}; this will determine
-which person identifier column will be used}
+Alternatively, it can be a list of all unique \code{person_id}/\code{patid} and
+variable combinations}
+
+\item{var_col}{\emph{string} || \strong{required}
+
+The name of the column within \code{jaccard_input_table} that contains all
+the variables that should be compared to each other in the similarity index}
+
+\item{omop_or_pcornet}{\emph{string} || \strong{required}
+
+A string, either \code{omop} or \code{pcornet}, indicating the CDM format of the data}
 }
 \value{
-a table with both variables, labeled \code{concept1} and \code{concept2}, the co-occurrence (\code{cocount}), individual
-concept counts (\code{concept1_ct}, \code{concept2_ct}), total unique patient counts where either code is used (\code{concept_count_union}),
-the \code{jaccard_index}, as well as proportion of patients where the concept appears (\code{concept1_prop}, \code{concept2_prop})
+A table with pairs of variables, labeled \code{concept1} and \code{concept2},
+counts & proportions of patients with each concept individually
+(\code{concept1_ct}, \code{concept1_prop}, \code{concept2_ct}, \code{concept2_prop}),
+count of patients with BOTH concepts (\code{cocount}),
+count of patients with EITHER concept (\code{concept_count_union}),
+and the \code{jaccard_index} statistic
 }
 \description{
 This function will compute the Jaccard Similarity Index for each combination of

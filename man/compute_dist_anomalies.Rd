@@ -2,35 +2,44 @@
 % Please edit documentation in R/anomaly_detection.R
 \name{compute_dist_anomalies}
 \alias{compute_dist_anomalies}
-\title{*_ms_anom_cs Anomaly Detection Eligibility}
+\title{Hotspots Anomaly Detection Eligibility Determination}
 \usage{
 compute_dist_anomalies(df_tbl, grp_vars, var_col, denom_cols)
 }
 \arguments{
-\item{df_tbl}{output from the computation of a particular function for anomaly detection}
+\item{df_tbl}{\emph{tabular input} || \strong{required}
 
-\item{grp_vars}{the columns to group by to compute the summary statistics for}
+A dataframe with at least one numerical variable & any relevant variables
+needed for grouping}
 
-\item{var_col}{column to perform summary statistics for, to detect an anomaly}
+\item{grp_vars}{\emph{string or vector} || \strong{required}
 
-\item{denom_cols}{denominator (or other) columns that should be preserved without nulls after
-the cross_join takes place}
+The variable(s) to be used as grouping variables in the analysis}
+
+\item{var_col}{\emph{string} || \strong{required}
+
+The variable with the numerical statistic of interest for the euclidean
+distance computation}
+
+\item{denom_cols}{\emph{string or vector} || \strong{required}
+
+The variable containing a denominator or any other variables that
+should be preserved without nulls after a cross_join takes place}
 }
 \value{
-the \code{df_tbl} with the following computed:
-\code{mean_val}, \code{median_val}, \code{sd_val}, \code{mad_val}, \code{cov_val}, \code{max_val},
-\code{min_val}, \code{range_val}, \code{total_ct}, \code{analysis_eligible}
-the \code{analysis_eligible} will indicate whether the group for which the user
-wishes to detect an anomaly for is eligible for analysis.
+This function will return the original \code{df_tbl} with the addition of the
+summary statistics used in the eligibility computation and a flag indicating
+whether a given variable (based on the grp_vars) is eligible for anomaly
+detection analysis. This table can then be passed into \code{detect_outliers}
+to identify anomalous values.
 }
 \description{
 This function will, for each group in a dataframe, identify groups that are eligible
 for anomaly detection analysis by examining the values in the \code{var_col}.
 The following conditions will disqualify a group from the anomaly detection analysis:
-(1) Sample size < 5 in group
-(2) Mean < 0.02 or Median < 0.01
-(3) Mean value < 0.05 and range <0.01
-(4) Coefficient of variance <0.01 and sample size <11
+(1) Mean < 0.02 or Median < 0.01
+(3) Mean value < 0.05 and range < 0.01
+(4) Coefficient of variance < 0.1 and sample size < 11
 If no groups meet this criteria, a warning will display in the console indicating
 that no groups were eligible.
 }
@@ -52,8 +61,12 @@ anomaly_output1 <- compute_dist_anomalies(df_tbl = sample_ms_input,
                                           var_col = 'count',
                                           denom_cols = 'total_var')
 
+anomaly_output1
+
 anomaly_output2 <- detect_outliers(df_tbl = anomaly_output1,
                                    column_analysis = 'count',
                                    column_variable = 'variable')
+
+anomaly_output2
 
 }

@@ -18,6 +18,8 @@ NULL
 #' @return one data frame with all combinations of the variables from cj_var_names with their
 #'         associated facts from the original cj_tbl input
 #'
+#' @keywords internal
+#'
 compute_at_cross_join <- function(cj_tbl,
                                   cj_var_names = c('site','concept_id'),
                                   join_type = 'left') {
@@ -72,19 +74,40 @@ compute_at_cross_join <- function(cj_tbl,
 #' distance between that value and the mean & median values for each group
 #' established by the `grp_vars` parameter.
 #'
-#' @param tbl table with at least the vars specified in `grp_vars` and `var_col`
-#' @param grp_vars variables to group by when computing summary statistics
-#' @param var_col column to compute summary statistics on
-#' @param num_sd (integer) number of standard deviations away from the mean
-#'               from which to compute the sd_lower and sd_upper columns
-#' @param num_mad (integer) number of median absolute deviations away from the median
-#'                from which to compute the mad_lower and mad_upper columns
-#' @return a table where, for each group in `grp_vars`, the following statistics are computed
-#'         based on the `var_col`: mean, sd, sd_lower, sd_upper, mad, mad_lower, mad_upper,
-#'         anomaly_yn (indicator of whether data point is +/- num_sd from mean or data point is > 90th percentile),
-#'         abs_diff_mean (absolute value of difference between mean for group and observation),
-#'         abs_diff_median (absolute value of difference between median for group and observation),
-#'         n_mad (the number of MAD away from the median where the data point falls)
+#' @param tbl *tabular input* || **required**
+#'
+#'   A table with the target numerical variable (`var_col`) for the analysis
+#'   and each of the required grouping variables (`grp_vars`)
+#'
+#' @param grp_vars *string or vector* || **required**
+#'
+#'   The name of the variable(s) to group by when computing summary statistics
+#'
+#' @param var_col *string* || **required**
+#'
+#'   The name of the numeric variable that should be the target of summary
+#'   statistic computations
+#'
+#' @param num_sd *integer* || **required**
+#'
+#'   The number of standard deviations away from the mean that should be used
+#'   as the lower and upper bounds for outlier detection. Values falling, for
+#'   example, over 2 standard deviations above or below the mean would be
+#'   considered outliers.
+#'
+#' @param num_mad *integer* || **required**
+#'
+#'   The number of median absolute deviations (MADs) away from the median that
+#'   should be used as lower and upper bounds. Outliers are not formally identified
+#'   based on the median, but the information will be available in the final
+#'   table should you prefer that method.
+#'
+#' @return
+#'   A table where, for each group in `grp_vars`, various summary statistics like the
+#'   mean, median, standard deviation, MAD, and others, are computed based on the
+#'   `var_col`. Outliers are identified in the `anomaly_yn` column based on whether
+#'   the data point is +/- `num_sd` from the mean or the data point is > the 90th
+#'   percentile.
 #'
 #' @examples
 #' # sample input table
@@ -153,6 +176,8 @@ compute_dist_mean_median <- function(tbl,
 #' @return one dataframe with all variables from ms_tbl with the addition of columns with a site Loess
 #'         value and a site Euclidean distance value
 #'
+#' @keywords internal
+#'
 compute_euclidean <- function(ms_tbl,
                               output_var,
                               grp_vars = c('site', 'concept_id')) {
@@ -190,18 +215,31 @@ compute_euclidean <- function(ms_tbl,
 
 }
 
-#' *_ms_anom_la Euclidean Distance Computation
+#' Euclidean Distance Computation
 #'
 #' This function will compute the Euclidean Distance for the `var_col` at each
-#' site in comparison to the overall, all-site mean.
+#' site in comparison to the overall, all-site mean. This is the backend for most
+#' of the Multi Site, Anomaly Detection, Longitudinal analyses.
 #'
-#' @param fot_input_tbl table output by [compute_fot()] for *_ms_anom_at analyses
-#' @param grp_vars the variables that should be preserved in the cross join
-#' @param var_col the column with the numerical statistic of interest for the euclidean
-#'                distance computation
+#' @param fot_input_tbl *tabular input* || **required**
 #'
-#' @return data frame with mean and median values for the user provided variable column
-#'         and the euclidean distance value from the all site mean
+#'   A table, typically output by [compute_fot()]
+#'
+#' @param grp_vars *string or vector* || **required**
+#'
+#'   The variable(s) to be used as grouping variables in the analysis. These
+#'   variables will also be preserved in the cross-join, meaning there should
+#'   not be any NAs as an artifact of the join for these variables.
+#'
+#' @param var_col *string* || **required**
+#'
+#'   The variable with the numerical statistic of interest for the euclidean
+#'   distance computation
+#'
+#' @return
+#'   This function will return the original data frame, where any time periods
+#'   without data are filled in with 0s, with mean and median values for
+#'   the `var_col` and the euclidean distance value based on the all-site mean
 #'
 #' @examples
 #' # sample multi-site, longitudinal input data (modeled after EVP)
@@ -270,23 +308,40 @@ ms_anom_euclidean <- function(fot_input_tbl,
 }
 
 
-#' *_ss_anom_la Anomaly Detection
+#' STL Regression Anomaly Detection
 #'
-#' For analyses where the `time_period` is smaller than a year, this function
-#' will execute [timetk::anomalize()] to identify outliers in the time series
-#' using STL regression. For year-level analyses, the same input table will be
-#' returned and a different anomaly detection method will be used at the *_output
-#' stage
+#' For Single Site, Anomaly Detection, Longitudinal analyses where the `time_period` is
+#' smaller than a year, this function will execute [timetk::anomalize()] to identify
+#' outliers in the time series using STL regression. For year-level analyses, the same
+#' input table will be returned and a different anomaly detection method will be used at
+#' the *_output stage
 #'
-#' @param fot_input_tbl table output by [compute_fot()] for *_ss_anom_at analyses
-#' @param grp_vars the variables that should be preserved in the cross join
-#' @param var_col the column with the numerical statistic of interest for the euclidean
-#'                distance computation
-#' @param time_var the column with time information
+#' @param fot_input_tbl *tabular input* || **required**
 #'
-#' @return one dataframe with all columns from the original input table
-#'         plus the columns needed for timetk output generated by the
-#'         `anomalize` function
+#'   A table, typically output by [compute_fot()]
+#'
+#' @param grp_vars *string or vector* || **required**
+#'
+#'   The variable(s) to be used as grouping variables in the analysis. These
+#'   variables will also be preserved in the cross-join, meaning there should
+#'   not be any NAs as an artifact of the join for these variables.
+#'
+#' @param var_col *string* || **required**
+#'
+#'   The variable with the numerical statistic of interest for the euclidean
+#'   distance computation
+#'
+#' @param time_var *string* || **required**
+#'
+#'   The variable with the time period date information (typically `time_start`)
+#'
+#' @return
+#'   For yearly analyses, the same input table will be returned and the anomaly
+#'   detection method will be executed via a control chart in the *_output step.
+#'   For smaller time increments, this function will return the input dataframe
+#'   with all columns from the original input table plus the columns needed for
+#'   timetk output generated by the `anomalize` function. These include an anomaly
+#'   indicator and variables related to the decomposition of the time series.
 #'
 #' @examples
 #' # sample single-site, longitudinal input data (modeled after EVP)
@@ -356,29 +411,42 @@ anomalize_ss_anom_la <- function(fot_input_tbl,
 
 }
 
-#' *_ms_anom_cs Anomaly Detection Eligibility
+#' Hotspots Anomaly Detection Eligibility Determination
 #'
 #' This function will, for each group in a dataframe, identify groups that are eligible
 #' for anomaly detection analysis by examining the values in the `var_col`.
 #' The following conditions will disqualify a group from the anomaly detection analysis:
-#'  (1) Sample size < 5 in group
-#'  (2) Mean < 0.02 or Median < 0.01
-#'  (3) Mean value < 0.05 and range <0.01
-#'  (4) Coefficient of variance <0.01 and sample size <11
+#'  (1) Mean < 0.02 or Median < 0.01
+#'  (3) Mean value < 0.05 and range < 0.01
+#'  (4) Coefficient of variance < 0.1 and sample size < 11
 #' If no groups meet this criteria, a warning will display in the console indicating
 #' that no groups were eligible.
 #'
-#' @param df_tbl output from the computation of a particular function for anomaly detection
-#' @param grp_vars the columns to group by to compute the summary statistics for
-#' @param var_col column to perform summary statistics for, to detect an anomaly
-#' @param denom_cols denominator (or other) columns that should be preserved without nulls after
-#'                   the cross_join takes place
+#' @param df_tbl *tabular input* || **required**
 #'
-#' @return the `df_tbl` with the following computed:
-#'  `mean_val`, `median_val`, `sd_val`, `mad_val`, `cov_val`, `max_val`,
-#'  `min_val`, `range_val`, `total_ct`, `analysis_eligible`
-#'  the `analysis_eligible` will indicate whether the group for which the user
-#'  wishes to detect an anomaly for is eligible for analysis.
+#'   A dataframe with at least one numerical variable & any relevant variables
+#'   needed for grouping
+#'
+#' @param grp_vars *string or vector* || **required**
+#'
+#'   The variable(s) to be used as grouping variables in the analysis
+#'
+#' @param var_col *string* || **required**
+#'
+#'   The variable with the numerical statistic of interest for the euclidean
+#'   distance computation
+#'
+#' @param denom_cols *string or vector* || **required**
+#'
+#'   The variable containing a denominator or any other variables that
+#'   should be preserved without nulls after a cross_join takes place
+#'
+#' @return
+#'   This function will return the original `df_tbl` with the addition of the
+#'   summary statistics used in the eligibility computation and a flag indicating
+#'   whether a given variable (based on the grp_vars) is eligible for anomaly
+#'   detection analysis. This table can then be passed into `detect_outliers`
+#'   to identify anomalous values.
 #'
 #' @examples
 #' # create sample input (modeled after EVP)
@@ -398,9 +466,13 @@ anomalize_ss_anom_la <- function(fot_input_tbl,
 #'                                           var_col = 'count',
 #'                                           denom_cols = 'total_var')
 #'
+#' anomaly_output1
+#'
 #' anomaly_output2 <- detect_outliers(df_tbl = anomaly_output1,
 #'                                    column_analysis = 'count',
 #'                                    column_variable = 'variable')
+#'
+#' anomaly_output2
 #'
 #' @export
 #'
@@ -448,22 +520,44 @@ compute_dist_anomalies <- function(df_tbl,
 
 
 
-#' *_ms_anom_cs Anomaly Detection
+#' Hotspots Anomaly Detection
 #'
 #' This function will identify anomalies in a dataframe using the
 #' [hotspots::outliers()] function. It assumes:
 #' (1) No time component;
 #' (2) Table has a column indicating whether a particular group or row is eligible for analysis;
-#' (3) column variable exists for which to compute the anomaly
+#' (3) numerical variable exists that should be used for anomaly detection analysis
 #' These conditions are met by the output of [compute_dist_anomalies()], which is typically
 #' the input for this function
 #'
-#' @param df_tbl tbl for analysis; usually output from [compute_dist_anomalies()]
-#' @param tail_input whether to detect anomaly on right, left, or both sides; defaults to `both`
-#' @param p_input the threshold for anomaly; defaults to 0.9
-#' @param column_analysis a string, which the name of the column for which to compute anomaly detection;
-#' @param column_variable a string, which is the name of the variable to compute summary statistics for;
-#' @param column_eligible a string, which is the name of the column that indicates eligibility for analysis
+#' @param df_tbl *tabular input* || **required**
+#'
+#'   A table meeting the previously described criteria. This input will
+#'   typically be the table output by [compute_dist_anomalies()]
+#'
+#' @param tail_input *string* || defaults to `both`
+#'
+#'   A string indicating whether outliers are identified for positive values,
+#'   negative values, or both.
+#'
+#'   Acceptable inputs are `positive`, `negative`, or `both`
+#'
+#' @param p_input *numeric* || defaults to `0.9`
+#'
+#'   The p-value threshold that should be used to identify anomalies
+#'
+#' @param column_analysis *string* || **required**
+#'
+#'   The name of the numerical column that is the target of the anomaly detection analysis
+#'
+#' @param column_variable *string* || **required**
+#'
+#'   The name of the column with the variable to which the analysis column is related
+#'   (ex: concept_id for the Concept Set Distribution module)
+#'
+#' @param column_eligible *string* || defaults to `analysis_eligible`
+#'
+#'   The name of the column that indicates eligibility for analysis
 #'
 #' @examples
 #' # create sample input (modeled after EVP)
@@ -483,9 +577,13 @@ compute_dist_anomalies <- function(df_tbl,
 #'                                           var_col = 'count',
 #'                                           denom_cols = 'total_var')
 #'
+#' anomaly_output1
+#'
 #' anomaly_output2 <- detect_outliers(df_tbl = anomaly_output1,
 #'                                    column_analysis = 'count',
 #'                                    column_variable = 'variable')
+#'
+#' anomaly_output2
 #'
 #' @export
 #'
@@ -493,9 +591,9 @@ compute_dist_anomalies <- function(df_tbl,
 detect_outliers <- function(df_tbl,
                             tail_input = 'both',
                             p_input = 0.9,
-                            column_analysis = 'prop_concept',
-                            column_eligible = 'analysis_eligible',
-                            column_variable = 'concept_id') {
+                            column_analysis,
+                            column_variable,
+                            column_eligible = 'analysis_eligible') {
 
   final <- list()
 
@@ -552,23 +650,37 @@ detect_outliers <- function(df_tbl,
 }
 
 
-#' Jaccard Index Computation
+#' Jaccard Index Anomaly Detection
 #'
 #' This function will compute the Jaccard Similarity Index for each combination of
 #' two variables that occur within a specific patient's record. This function is compatible
 #' with both the OMOP and PCORnet CDMs based on the user's selection.
 #'
-#' @param jaccard_input_tbl tbl that will undergo jaccard index computation;
-#'                          the requirement is that it contains at least two columns: `person_id`/`patid` and a variable column
-#'                          where each row represents an instance where a specific variable is used for a given patient
-#'                          Alternatively, it can be a list of all unique `person_id`/`patid` and variable combinations
-#' @param var_col the column within `jaccard_input_table` that contains all the concepts that should be compared to each other
-#' @param omop_or_pcornet indication of which CDM should be used - either `omop` or `pcornet`; this will determine
-#'                        which person identifier column will be used
+#' @param jaccard_input_tbl *tabular input* || **required**
 #'
-#' @return a table with both variables, labeled `concept1` and `concept2`, the co-occurrence (`cocount`), individual
-#'         concept counts (`concept1_ct`, `concept2_ct`), total unique patient counts where either code is used (`concept_count_union`),
-#'         the `jaccard_index`, as well as proportion of patients where the concept appears (`concept1_prop`, `concept2_prop`)
+#'   A table that contains at least `person_id`/`patid` and a variable column, and
+#'   where each row represents a unique instance where the variable occurred for
+#'   a given patient
+#'
+#'   Alternatively, it can be a list of all unique `person_id`/`patid` and
+#'   variable combinations
+#'
+#' @param var_col *string* || **required**
+#'
+#'   The name of the column within `jaccard_input_table` that contains all
+#'   the variables that should be compared to each other in the similarity index
+#'
+#' @param omop_or_pcornet *string* || **required**
+#'
+#'   A string, either `omop` or `pcornet`, indicating the CDM format of the data
+#'
+#' @return
+#'   A table with pairs of variables, labeled `concept1` and `concept2`,
+#'   counts & proportions of patients with each concept individually
+#'   (`concept1_ct`, `concept1_prop`, `concept2_ct`, `concept2_prop`),
+#'   count of patients with BOTH concepts (`cocount`),
+#'   count of patients with EITHER concept (`concept_count_union`),
+#'   and the `jaccard_index` statistic
 #'
 #' @examples
 #' # create sample input with person identifier and variable associations

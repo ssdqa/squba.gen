@@ -7,21 +7,31 @@
 check_site_type(cohort, multi_or_single_site)
 }
 \arguments{
-\item{cohort}{a cohort tbl with a column for \code{site}, \code{person_id}, \code{start_date} and \code{end_date}}
+\item{cohort}{\emph{tabular input} || \strong{required}
 
-\item{multi_or_single_site}{Option to run the function on a single vs multiple sites
-- @single - run the function for a single site
-- @multi - run the function for multiple sites}
+The cohort to be used for data quality testing. This table should contain,
+at minimum:
+\itemize{
+\item \code{site} | \emph{character} | the name(s) of institutions included in your cohort
+\item \code{person_id} / \code{patid} | \emph{integer} / \emph{character} | the patient identifier
+\item \code{start_date} | \emph{date} | the start of the cohort period
+\item \code{end_date} | \emph{date} | the end of the cohort period
+}}
+
+\item{multi_or_single_site}{\emph{string} || defaults to \code{single}
+
+A string, either \code{single} or \code{multi}, indicating whether a single-site or
+multi-site analysis should be executed}
 }
 \value{
-if \code{multi_or_single_site} = single but multiple sites are provided, the cohort table
-is returned with a summary site column equaling \code{combined} so all sites will be treated
-as one; otherwise, the existing site column is left alone. if an illogical parameter combination
-is supplied, the function will provide an error with recommendations on how to remedy the
-issue.
+If \code{multi_or_single_site = single} but multiple sites are provided, the cohort table
+is returned with a summary site column set to \code{combined} so all sites will be treated
+as one group. Otherwise, the existing site column is returned as-is.
+If an illogical parameter combination is supplied, the function will
+return an error with recommendations on how to remedy the issue.
 }
 \description{
-This function will evaluate the number of distinct values in the "site" column in
+This function will evaluate the number of distinct values in the \code{site} column in
 the provided cohort table and determine how that compares to the provided
 \code{multi_or_single_site} designation.
 }

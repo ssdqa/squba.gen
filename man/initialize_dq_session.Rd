@@ -2,61 +2,128 @@
 % Please edit documentation in R/initialize_session.R
 \name{initialize_dq_session}
 \alias{initialize_dq_session}
-\title{Initialize Argos Session for DQ}
+\title{Initialize argos Session for squba Analysis}
 \usage{
 initialize_dq_session(
   session_name,
   db_conn,
+  is_json = FALSE,
   working_directory = getwd(),
   file_subdirectory,
-  is_json = FALSE,
+  results_subdirectory = NULL,
   cdm_schema,
   results_schema = NULL,
   vocabulary_schema = NULL,
-  results_tag = NULL
+  results_tag = NULL,
+  cache_enabled = FALSE,
+  retain_intermediates = FALSE,
+  db_trace = TRUE,
+  default_file_output = FALSE
 )
 }
 \arguments{
-\item{session_name}{arbitrary string to name the session}
+\item{session_name}{\emph{string} || \strong{required}
 
-\item{db_conn}{either a connection object used to connect to a relational database OR the
-path to a json file with the relevant connection information; if the latter,
-is_json should be set to TRUE}
+An arbitrary name to identify the session}
 
-\item{working_directory}{the base directory in which the analysis is taking place; defaults to the output of \code{\link[base:getwd]{base::getwd()}}}
+\item{db_conn}{\emph{string} / \emph{database connection} || \strong{required}
 
-\item{file_subdirectory}{the \emph{subdirectory} within the working directory where all files to be used in the analysis
-(i.e. concept sets) are kept. this sets a default file location so the functions can easily
-read in relevant files without having to redefine the path}
+Either a connection object used to connect to a relational database
+(ex: the output of \code{\link[DBI:dbConnect]{DBI::dbConnect()}}) OR a string indicating the path to
+a JSON file with relevant connection information
 
-\item{is_json}{a logical to indicate whether db_conn is the path to a json file or not}
+This information will be used to connect to the CDM and access the data
+indicated by the user for each analysis}
 
-\item{cdm_schema}{string name of the schema where the data in a CDM format is kept}
+\item{is_json}{\emph{boolean} || defaults to \code{FALSE}
 
-\item{results_schema}{string name of the schema where results should be output if the user chooses
-to utilize the \code{argos::results_tbl()} function native to the argos environment;
-defaults to NULL}
+A boolean indicating whether \code{db_conn} is a database connection object (\code{FALSE})
+or the path to a JSON file with connection details (\code{TRUE})}
 
-\item{vocabulary_schema}{string name of the schema where vocabulary tables (i.e. concept) are
-stored on the database}
+\item{working_directory}{\emph{string} || defaults to the result of \code{\link[base:getwd]{base::getwd()}}
 
-\item{results_tag}{string to indicate a suffix (if any) that should be appended onto
-any results tables; defaults to NULL}
+The base directory in which the analysis is taking place
+
+It is expected that both the file & results subdirectories are directories
+downstream of this base directory.}
+
+\item{file_subdirectory}{\emph{string} || \strong{required}
+
+The \emph{subdirectory} within the working_directory where all files to be used
+in the analysis (i.e. concept sets) are kept. Only the name of this directory
+needs to be supplied here, not the full file path including the working_directory.
+
+This parameter sets a default file location so the \code{squba} functions can easily
+read in relevant files without having to redefine the path each time.}
+
+\item{results_subdirectory}{\emph{string} || defaults to \code{NULL}
+
+The \emph{subdirectory} within the base directory where any results should be output
+(if file = TRUE when using \code{argos::output_tbl}). Only the name of this directory
+needs to be supplied here, not the full file path including the working_directory.}
+
+\item{cdm_schema}{\emph{string} || \strong{required}
+
+The name of the schema where the data in a CDM format is kept. This location
+must exist within the database identified in \code{db_conn}}
+
+\item{results_schema}{\emph{string} || defaults to \code{NULL}
+
+The name of the schema on the database where results should be output
+(if file = FALSE when using \code{argos::output_tbl}). This is also the location
+from which results can be retrieved if using \code{argos::results_tbl}}
+
+\item{vocabulary_schema}{\emph{string} || defaults to \code{NULL}
+
+The name of the schema on the database where any vocabulary reference tables
+(like the OMOP concept table) are kept}
+
+\item{results_tag}{\emph{string} || defaults to \code{NULL}
+
+An arbitrary suffix that will be appended onto the names of any result
+tables output using \code{argos::output_tbl}. This feature can be helpful if
+you are re-running analysis and want to make sure the tables are uniquely
+identified.}
+
+\item{cache_enabled}{\emph{boolean} || defaults to \code{FALSE}
+
+A boolean value indicating whether repeated attempts to load the same
+codeset (via \code{argos::load_codeset}) should use a cached value rather than
+reloading}
+
+\item{retain_intermediates}{\emph{boolean} || defaults to \code{FALSE}
+
+A boolean indicating whether intermediate/temporary tables should be
+manifested and retained on the database (in the defined \code{results_schema})
+or remain as temporary objects}
+
+\item{db_trace}{\emph{boolean} || defaults to \code{TRUE}
+
+A boolean indicating whether the query log printed in the console should
+include detailed information about execution of SQL queries in the database.
+This is essentially a "verbose" parameter controlling how much information
+you want to see about certain queries being executed.}
+
+\item{default_file_output}{\emph{boolean} || defaults to \code{FALSE}
+
+A boolean indicating whether \code{argos::output_tbl} should output a file
+by default or if it should just output the \code{results_schema} on the database.
+
+This can also be controlled at the function level, but this is an option for
+a global setting if you would like local, CSV copies of all your results.}
 }
 \value{
-Argos session will be established in the environment; this session is
-automatically established as the default that will appear when \code{argos::get_argos_default()}
-is called
-
-\if{html}{\out{<div class="sourceCode">}}\preformatted{    Function will print the database connection information and session
-    information in the console for user review
-}\if{html}{\out{</div>}}
+This function will quietly load all exported argos functions into the
+environment and establish the necessary configurations to allow them to
+operate. Note that the argos session itself will NOT appear in the global
+environment.
 }
 \description{
-This is a wrapper function that will create an argos session and set up internal configurations
-that will allow all downstream functions to access argos convenience functions.
-This step is \emph{REQUIRED}, and makes it easier to connect to a backend database to conduct analyses.
-The standard argos workflow can also be used, but this wrapper is provided for convenience.
+This is a wrapper function that will create an argos session and set up
+internal configurations that will allow all downstream functions to access
+argos convenience functions. This step is \strong{REQUIRED}, and makes it
+easier to connect to a backend database to conduct analyses. The standard
+argos workflow can also be used, but this wrapper is provided for convenience.
 }
 \examples{
 \dontrun{

@@ -2,25 +2,35 @@
 % Please edit documentation in R/anomaly_detection.R
 \name{ms_anom_euclidean}
 \alias{ms_anom_euclidean}
-\title{*_ms_anom_la Euclidean Distance Computation}
+\title{Euclidean Distance Computation}
 \usage{
 ms_anom_euclidean(fot_input_tbl, grp_vars, var_col)
 }
 \arguments{
-\item{fot_input_tbl}{table output by \code{\link[=compute_fot]{compute_fot()}} for *_ms_anom_at analyses}
+\item{fot_input_tbl}{\emph{tabular input} || \strong{required}
 
-\item{grp_vars}{the variables that should be preserved in the cross join}
+A table, typically output by \code{\link[=compute_fot]{compute_fot()}}}
 
-\item{var_col}{the column with the numerical statistic of interest for the euclidean
+\item{grp_vars}{\emph{string or vector} || \strong{required}
+
+The variable(s) to be used as grouping variables in the analysis. These
+variables will also be preserved in the cross-join, meaning there should
+not be any NAs as an artifact of the join for these variables.}
+
+\item{var_col}{\emph{string} || \strong{required}
+
+The variable with the numerical statistic of interest for the euclidean
 distance computation}
 }
 \value{
-data frame with mean and median values for the user provided variable column
-and the euclidean distance value from the all site mean
+This function will return the original data frame, where any time periods
+without data are filled in with 0s, with mean and median values for
+the \code{var_col} and the euclidean distance value based on the all-site mean
 }
 \description{
 This function will compute the Euclidean Distance for the \code{var_col} at each
-site in comparison to the overall, all-site mean.
+site in comparison to the overall, all-site mean. This is the backend for most
+of the Multi Site, Anomaly Detection, Longitudinal analyses.
 }
 \examples{
 # sample multi-site, longitudinal input data (modeled after EVP)

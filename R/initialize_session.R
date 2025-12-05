@@ -1,36 +1,108 @@
 
-
-#' Initialize Argos Session for DQ
+#' Initialize argos Session for squba Analysis
 #'
-#' This is a wrapper function that will create an argos session and set up internal configurations
-#' that will allow all downstream functions to access argos convenience functions.
-#' This step is *REQUIRED*, and makes it easier to connect to a backend database to conduct analyses.
-#' The standard argos workflow can also be used, but this wrapper is provided for convenience.
+#' This is a wrapper function that will create an argos session and set up
+#' internal configurations that will allow all downstream functions to access
+#' argos convenience functions. This step is **REQUIRED**, and makes it
+#' easier to connect to a backend database to conduct analyses. The standard
+#' argos workflow can also be used, but this wrapper is provided for convenience.
 #'
-#' @param session_name arbitrary string to name the session
-#' @param db_conn either a connection object used to connect to a relational database OR the
-#'                path to a json file with the relevant connection information; if the latter,
-#'                is_json should be set to TRUE
-#' @param working_directory the base directory in which the analysis is taking place; defaults to the output of [base::getwd()]
-#' @param file_subdirectory the *subdirectory* within the working directory where all files to be used in the analysis
-#'                       (i.e. concept sets) are kept. this sets a default file location so the functions can easily
-#'                       read in relevant files without having to redefine the path
-#' @param is_json a logical to indicate whether db_conn is the path to a json file or not
-#' @param cdm_schema string name of the schema where the data in a CDM format is kept
-#' @param results_schema string name of the schema where results should be output if the user chooses
-#'                       to utilize the `argos::results_tbl()` function native to the argos environment;
-#'                       defaults to NULL
-#' @param results_tag string to indicate a suffix (if any) that should be appended onto
-#'                    any results tables; defaults to NULL
-#' @param vocabulary_schema string name of the schema where vocabulary tables (i.e. concept) are
-#'                          stored on the database
+#' @param session_name *string* || **required**
 #'
-#' @return Argos session will be established in the environment; this session is
-#'         automatically established as the default that will appear when `argos::get_argos_default()`
-#'         is called
+#'   An arbitrary name to identify the session
 #'
-#'         Function will print the database connection information and session
-#'         information in the console for user review
+#' @param db_conn *string* / *database connection* || **required**
+#'
+#'   Either a connection object used to connect to a relational database
+#'   (ex: the output of [DBI::dbConnect()]) OR a string indicating the path to
+#'   a JSON file with relevant connection information
+#'
+#'   This information will be used to connect to the CDM and access the data
+#'   indicated by the user for each analysis
+#'
+#' @param is_json *boolean* || defaults to `FALSE`
+#'
+#'   A boolean indicating whether `db_conn` is a database connection object (`FALSE`)
+#'   or the path to a JSON file with connection details (`TRUE`)
+#'
+#' @param working_directory *string* || defaults to the result of [base::getwd()]
+#'
+#'   The base directory in which the analysis is taking place
+#'
+#'   It is expected that both the file & results subdirectories are directories
+#'   downstream of this base directory.
+#'
+#' @param file_subdirectory *string* || **required**
+#'
+#'   The *subdirectory* within the working_directory where all files to be used
+#'   in the analysis (i.e. concept sets) are kept. Only the name of this directory
+#'   needs to be supplied here, not the full file path including the working_directory.
+#'
+#'   This parameter sets a default file location so the `squba` functions can easily
+#'   read in relevant files without having to redefine the path each time.
+#'
+#' @param results_subdirectory *string* || defaults to `NULL`
+#'
+#'   The *subdirectory* within the base directory where any results should be output
+#'   (if file = TRUE when using `argos::output_tbl`). Only the name of this directory
+#'   needs to be supplied here, not the full file path including the working_directory.
+#'
+#' @param cdm_schema *string* || **required**
+#'
+#'   The name of the schema where the data in a CDM format is kept. This location
+#'   must exist within the database identified in `db_conn`
+#'
+#' @param results_schema *string* || defaults to `NULL`
+#'
+#'   The name of the schema on the database where results should be output
+#'   (if file = FALSE when using `argos::output_tbl`). This is also the location
+#'   from which results can be retrieved if using `argos::results_tbl`
+#'
+#' @param vocabulary_schema *string* || defaults to `NULL`
+#'
+#'   The name of the schema on the database where any vocabulary reference tables
+#'   (like the OMOP concept table) are kept
+#'
+#' @param results_tag *string* || defaults to `NULL`
+#'
+#'   An arbitrary suffix that will be appended onto the names of any result
+#'   tables output using `argos::output_tbl`. This feature can be helpful if
+#'   you are re-running analysis and want to make sure the tables are uniquely
+#'   identified.
+#'
+#' @param cache_enabled *boolean* || defaults to `FALSE`
+#'
+#'   A boolean value indicating whether repeated attempts to load the same
+#'   codeset (via `argos::load_codeset`) should use a cached value rather than
+#'   reloading
+#'
+#' @param retain_intermediates *boolean* || defaults to `FALSE`
+#'
+#'   A boolean indicating whether intermediate/temporary tables should be
+#'   manifested and retained on the database (in the defined `results_schema`)
+#'   or remain as temporary objects
+#'
+#' @param db_trace *boolean* || defaults to `TRUE`
+#'
+#'   A boolean indicating whether the query log printed in the console should
+#'   include detailed information about execution of SQL queries in the database.
+#'   This is essentially a "verbose" parameter controlling how much information
+#'   you want to see about certain queries being executed.
+#'
+#' @param default_file_output *boolean* || defaults to `FALSE`
+#'
+#'   A boolean indicating whether `argos::output_tbl` should output a file
+#'   by default or if it should just output the `results_schema` on the database.
+#'
+#'   This can also be controlled at the function level, but this is an option for
+#'   a global setting if you would like local, CSV copies of all your results.
+#'
+#' @return
+#'   This function will quietly load all exported argos functions into the
+#'   environment and establish the necessary configurations to allow them to
+#'   operate. Note that the argos session itself will NOT appear in the global
+#'   environment.
+#'
 #'
 #' @examples
 #' \dontrun{
@@ -66,20 +138,23 @@
 #'
 initialize_dq_session <- function(session_name,
                                   db_conn,
+                                  is_json = FALSE,
                                   working_directory = getwd(),
                                   file_subdirectory,
-                                  is_json = FALSE,
+                                  results_subdirectory = NULL,
                                   cdm_schema,
                                   results_schema = NULL,
                                   vocabulary_schema = NULL,
-                                  results_tag = NULL){
+                                  results_tag = NULL,
+                                  cache_enabled = FALSE,
+                                  retain_intermediates = FALSE,
+                                  db_trace = TRUE,
+                                  default_file_output = FALSE){
 
   # Establish session
   argos_session <- argos$new(session_name)
 
   set_argos_default(argos_session)
-
-  #assign(session_name, argos_session, envir = .GlobalEnv)
 
   # Set standard configs
   if(!is_json){
@@ -91,12 +166,12 @@ initialize_dq_session <- function(session_name,
   get_argos_default()$config('cdm_schema', cdm_schema)
   get_argos_default()$config('results_schema', results_schema)
   get_argos_default()$config('vocabulary_schema', vocabulary_schema)
-  get_argos_default()$config('cache_enabled', FALSE)
-  get_argos_default()$config('retain_intermediates', FALSE)
-  get_argos_default()$config('db_trace', TRUE)
-  get_argos_default()$config('can_explain',
-                             !is.na(tryCatch(db_explain(config('db_src'), 'select 1 = 1'),
-                                             error = function(e) NA)))
+  get_argos_default()$config('cache_enabled', cache_enabled)
+  get_argos_default()$config('retain_intermediates', retain_intermediates)
+  get_argos_default()$config('db_trace', db_trace)
+  get_argos_default()$config('can_explain', !is.na(tryCatch(db_explain(config('db_src'), 'select 1 = 1'),
+                                                      error = function(e) NA)))
+  get_argos_default()$config('results_target', ifelse(default_file_output, 'file', TRUE))
 
   if(is.null(results_tag)){
     get_argos_default()$config('results_name_tag', '')
@@ -109,14 +184,15 @@ initialize_dq_session <- function(session_name,
 
   # Set specs directory
   ## Drop path to working directory if present
-  drop_wd <- str_remove(file_subdirectory, working_directory)
-  get_argos_default()$config('subdirs', list(spec_dir = drop_wd))
+  specs_drop_wd <- stringr::str_remove(file_subdirectory, working_directory)
+  results_drop_wd <- stringr::str_remove(results_subdirectory, working_directory)
+  get_argos_default()$config('subdirs', list(spec_dir = specs_drop_wd,
+                                             result_dir = results_drop_wd))
 
   # Print session information
   db_str <- DBI::dbGetInfo(config('db_src'))
   cli::cli_div(theme = list(span.code = list(color = 'blue')))
 
   cli::cli_inform(paste0('Connected to: ', db_str$dbname, '@', db_str$host))
-  cli::cli_inform('To see environment settings, run {.code get_argos_default()}')
 
 }

@@ -22,3 +22,4 @@ value and a site Euclidean distance value
 \description{
 Compute Euclidean Distance
 }
+\keyword{internal}

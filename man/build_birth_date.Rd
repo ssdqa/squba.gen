@@ -7,19 +7,24 @@
 build_birth_date(cohort, person_tbl)
 }
 \arguments{
-\item{cohort}{table with cohort members; must at least have person_id}
+\item{cohort}{\emph{tabular input} || \strong{required}
 
-\item{person_tbl}{CDM person table; must at least have person_id, year_of_birth,
-month_of_birth, and day_of_birth}
+A table with cohort members, which contains at least a \code{person_id} column}
+
+\item{person_tbl}{\emph{tabular input} || \strong{required}
+
+The CDM \code{person} table or another table that contains at least \code{person_id},
+\code{year_of_birth}, \code{month_of_birth}, and \code{day_of_birth}}
 }
 \value{
-a table with a new birth_date column that is a combination of year, month, and
-day of birth; improves ability to compute ages
+This function will return a table with a new birth_date column that is a
+combination of year, month, and day of birth. This is intended to facilitate
+computations using date of birth, like computing age.
 }
 \description{
 This function, which is specific to the OMOP CDM implementation, will create
-an aggregate birth_date column using year_of_birth, month_of_birth, and
-day_of_birth
+an aggregate birth_date column using \code{year_of_birth}, \code{month_of_birth}, and
+\code{day_of_birth}
 }
 \examples{
 \dontrun{

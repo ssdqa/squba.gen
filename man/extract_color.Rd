@@ -16,3 +16,4 @@ example useage: extract_color() (returns all colors) or extract_color("rust") (j
 \description{
 Function to extract colors as hex codes
 }
+\keyword{internal}

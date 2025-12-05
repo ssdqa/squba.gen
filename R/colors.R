@@ -11,6 +11,8 @@ NULL
 #' @return name and hex code/s for specified color
 #' example useage: extract_color() (returns all colors) or extract_color("rust") (just returns "rust")
 #'
+#' @keywords internal
+#'
 extract_color <- function(...) {
   cols <- c(...)
 
@@ -27,6 +29,9 @@ extract_color <- function(...) {
 #' @param ... Additional arguments to pass to colorRampPalette()
 #' @return color palettes, interpolated if necessary, with specified scheme and number of colors
 #' example usage: squba_pal("beachy")(10)
+#'
+#' @keywords internal
+#'
 squba_pal <- function(palette, reverse = FALSE, ...) {
   pal <- squba_palettes_standard[[palette]]
 
@@ -69,17 +74,28 @@ squba_palettes_standard<-list(
 # usage: squba_pal("dark")(10)
 
 
-#' SQUBA Fill Scale Constructor
+#' squba Fill Scale Constructor
 #'
-#' This function will operate with ggplot objects to use the SQUBA
+#' This function will operate with ggplot objects to use the `squba`
 #' standard colors/color palettes to add fill to graphs
 #'
-#' @param palette Character name of palette in squba_palettes_standard
-#'                  If no palette specified, defaults to "main" palette
-#' @param discrete Boolean indicating whether fill aesthetic is discrete or not
-#' @param reverse Boolean indicating whether the palette should be reversed
-#' @param ... Additional arguments passed to discrete_scale() or
-#'            scale_color_gradientn(), used respectively when discrete is TRUE or FALSE
+#' @param palette *string* || defaults to `main`
+#'
+#'   The name of the palette as it appears in `squba_palettes_standard`
+#'
+#' @param discrete *boolean* || defaults to `TRUE`
+#'
+#'   A boolean indicating whether the fill aesthetic is discrete or not
+#'
+#' @param reverse *boolean* || defaults to `FALSE`
+#'
+#'   A boolean indicating whether the palette should be reversed
+#'
+#' @param ...
+#'
+#'   Any additional arguments passed to [ggplot2::discrete_scale] or
+#'   [ggplot2::scale_fill_gradientn], used respectively when
+#'   discrete is TRUE or FALSE
 #'
 #' @examples
 #' library(ggplot2)
@@ -102,17 +118,28 @@ scale_fill_squba <- function(palette = "main", discrete = TRUE, reverse = FALSE,
   }
 }
 
-#' SQUBA Color Scale Constructor
+#' squba Color Scale Constructor
 #'
-#' This function will operate with ggplot objects to use the SQUBA
+#' This function will operate with ggplot objects to use the `squba`
 #' standard colors/color palettes to add color to graphs
 #'
-#' @param palette Character name of palette in squba_palettes_standard.
-#'                  If no palette specified, defaults to "main" palette
-#' @param discrete Boolean indicating whether color aesthetic is discrete or not
-#' @param reverse Boolean indicating whether the palette should be reversed
-#' @param ... Additional arguments passed to discrete_scale() or
-#'            scale_color_gradientn(), used respectively when discrete is TRUE or FALSE
+#' @param palette *string* || defaults to `main`
+#'
+#'   The name of the palette as it appears in `squba_palettes_standard`
+#'
+#' @param discrete *boolean* || defaults to `TRUE`
+#'
+#'   A boolean indicating whether the color aesthetic is discrete or not
+#'
+#' @param reverse *boolean* || defaults to `FALSE`
+#'
+#'   A boolean indicating whether the palette should be reversed
+#'
+#' @param ...
+#'
+#'   Any additional arguments passed to [ggplot2::discrete_scale] or
+#'   [ggplot2::scale_color_gradientn], used respectively when
+#'   discrete is TRUE or FALSE
 #'
 #' @examples
 #' library(ggplot2)

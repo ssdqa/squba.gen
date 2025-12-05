@@ -8,45 +8,78 @@ compute_fot(
   cohort,
   check_func,
   site_col,
-  reduce_id = "visit_type",
+  reduce_id = NULL,
   time_period = "year",
-  time_span = c("2012-01-01", "2022-12-31"),
+  time_span = c("2012-01-01", "2020-12-31"),
   site_list
 )
 }
 \arguments{
-\item{cohort}{a cohort tbl with a column for \code{site}, \code{person_id}, \code{start_date} and \code{end_date}}
+\item{cohort}{\emph{tabular input} || \strong{required}
 
-\item{check_func}{the base function for the check that needs to be executed across time; this argument
-should be structured as the following, where dat is the input data for the function:
+The cohort to be used for data quality testing. This table should contain,
+at minimum:
+\itemize{
+\item \code{site} | \emph{character} | the name(s) of institutions included in your cohort
+\item \code{person_id} / \code{patid} | \emph{integer} / \emph{character} | the patient identifier
+\item \code{start_date} | \emph{date} | the start of the cohort period
+\item \code{end_date} | \emph{date} | the end of the cohort period
+}
 
-\if{html}{\out{<div class="sourceCode">}}\preformatted{              function(dat)\{check_function(param1 = dat, param2 = param2_input, ...,
-              paramX = paramX_input)\}
+Note that the start and end dates included in this table will be used to
+limit the search window for the analyses in this module.}
 
-              all parameters for the base check function should be included if any defaults are not being
-              used
-}\if{html}{\out{</div>}}}
+\item{check_func}{\emph{function} || \strong{required}
 
-\item{site_col}{the name of the column in the cohort that contains the site names}
+The function that should be executed within each time period in the loop. This
+parameter should be structured as the following, where \code{dat} is the input data
+for the function:
 
-\item{reduce_id}{if the check provided in @check_func returns a list of tables, this is
-the ID that should be used to reduce the tables into one dataframe}
+\code{function(dat){check_function(param1 = dat, param2 = param2_input, ..., paramX = paramX_input)}}
 
-\item{time_period}{when time = TRUE, this argument defines the distance between dates within the specified time period. defaults
-to \code{year}, but other time periods such as \code{month} or \code{week} are also acceptable}
+Make sure to include all parameters required for the original function where
+default values are not being used.}
 
-\item{time_span}{when time = TRUE, this argument defines the start and end dates for the time period of interest. should be
-formatted as c(start date, end date) in yyyy-mm-dd date format}
+\item{site_col}{\emph{string} || \strong{required}
 
-\item{site_list}{A list of sites for which you would like to examine clinical facts. Can be one site
-(single-site) or multiple (multi-site)}
+The name of the column in the cohort table that contains the site names. This
+will typically be either \code{site} or \code{site_summ}}
+
+\item{reduce_id}{\emph{string} || defaults to \code{NULL}
+
+If the function provided in \code{check_func} returns a list of tables, this parameter
+should be the name of the column that should be used to reduce the tables into
+one dataframe (via \link[dplyr:bind_rows]{dplyr::bind_rows})}
+
+\item{time_period}{\emph{string} || defaults to \code{year}
+
+A string indicating the distance between dates within the specified time_span.
+Defaults to \code{year}, but other time periods such as \code{month} or \code{week} are
+also acceptable}
+
+\item{time_span}{\emph{vector - length 2} || defaults to \code{c('2012-01-01', '2020-01-01')}
+
+A vector indicating the lower and upper bounds of the time series for longitudinal analyses}
+
+\item{site_list}{\emph{list} || \strong{required}
+
+A list of sites for which you would like to examine clinical facts. Can be one site
+(single-site) or multiple (multi-site). Ensure that all sites listed here exist
+in the provided cohort table.}
 }
 \value{
-one dataframe where the output of @check_func has been executed for each @time_period in
-the provided @time_span for each of the sites included in @site_list
+This function will return a dataframe where the output of the provided \code{check_func}
+has been executed once for each \code{time_period} in the provided \code{time_span} for each of
+the sites included in \code{site_list}
 }
 \description{
-Compute Facts Over Time
+This function will loop through a time series and execute a user-provided
+function against only the data within the time period of interest. It will
+also ensure that only patients whose start date has passed but whose end date
+has not passed are included in the analysis for any given time period. This means
+that, for example, a patient who has a cohort period 1/1/2020 to 1/1/2025 would
+be included when looking at the year of 2024, but they would not be included when
+looking at the year of 2019 as they had not yet entered the cohort.
 }
 \examples{
 \dontrun{

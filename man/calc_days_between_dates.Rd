@@ -30,3 +30,4 @@ Presto, & Spark.
 \details{
 Should always be wrapped by sql()
 }
+\keyword{internal}

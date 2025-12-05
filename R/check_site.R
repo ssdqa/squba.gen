@@ -1,20 +1,30 @@
 
 #' Check Site Type
 #'
-#' This function will evaluate the number of distinct values in the "site" column in
+#' This function will evaluate the number of distinct values in the `site` column in
 #' the provided cohort table and determine how that compares to the provided
 #' `multi_or_single_site` designation.
 #'
-#' @param cohort a cohort tbl with a column for `site`, `person_id`, `start_date` and `end_date`
-#' @param multi_or_single_site Option to run the function on a single vs multiple sites
-#'                               - @single - run the function for a single site
-#'                               - @multi - run the function for multiple sites
+#' @param cohort *tabular input* || **required**
 #'
-#' @return if `multi_or_single_site` = single but multiple sites are provided, the cohort table
-#'         is returned with a summary site column equaling `combined` so all sites will be treated
-#'         as one; otherwise, the existing site column is left alone. if an illogical parameter combination
-#'         is supplied, the function will provide an error with recommendations on how to remedy the
-#'         issue.
+#'   The cohort to be used for data quality testing. This table should contain,
+#'   at minimum:
+#'   - `site` | *character* | the name(s) of institutions included in your cohort
+#'   - `person_id` / `patid` | *integer* / *character* | the patient identifier
+#'   - `start_date` | *date* | the start of the cohort period
+#'   - `end_date` | *date* | the end of the cohort period
+#'
+#' @param multi_or_single_site *string* || defaults to `single`
+#'
+#'   A string, either `single` or `multi`, indicating whether a single-site or
+#'   multi-site analysis should be executed
+#'
+#' @return
+#'   If `multi_or_single_site = single` but multiple sites are provided, the cohort table
+#'   is returned with a summary site column set to `combined` so all sites will be treated
+#'   as one group. Otherwise, the existing site column is returned as-is.
+#'   If an illogical parameter combination is supplied, the function will
+#'   return an error with recommendations on how to remedy the issue.
 #'
 #' @examples
 #' ## Create sample cohort
@@ -83,16 +93,16 @@ check_site_type <- function(cohort,
 #' this function will replace the name of that column with the original "site"
 #' name.
 #'
-#' @param tbl the tbl to use for
-#' replacement of `site_summ`
+#' @param tbl *tabular input* || **required**
 #'
+#'   The table with a `site_summ` column that needs to be replaced
 #'
-#' @return tbl with `site` replacing `site_summ`
+#' @return
+#'   The same table that was used as input, with `site` replacing `site_summ`
 #'
 #' @examples
 #' ## Sample input table
-#' input_sample <- dplyr::tibble(site = c("Site A", "Site B", "Site C"),
-#'                               person_id = c(1,2,3),
+#' input_sample <- dplyr::tibble(person_id = c(1,2,3),
 #'                               site_summ = c("combined","combined","combined"))
 #'
 #' ## Replace site_summ col for final output

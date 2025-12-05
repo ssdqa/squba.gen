@@ -1,17 +1,32 @@
-#' Join to OMOP Vocabulary Table
+#' Join to a reference vocabulary table
 #'
-#' This is a convenience function that allows users to join to an OMOP
-#' vocabulary table (most likely the `concept` table)
+#' This is a convenience function that allows users to join to a reference
+#' vocabulary table (most likely the OMOP `concept` table). It is intended
+#' to pull in the full name of a concept and facilitate the review of results.
 #'
-#' @param tbl data table to which the vocabulary table should be joined
-#' @param vocab_tbl location of the vocabulary table
-#' @param col the column that should be used in the `by` statement to join
-#'            to the vocab_col in the vocabulary table
-#' @param vocab_col the column in the vocabulary table that should be used to join
-#'                  to the `tbl`
+#' @param tbl *tabular input* || **required**
 #'
-#' @return the dataframe provided in `tbl` with the addition of the concept name
-#'         column
+#'   A table to which the vocabulary table should be joined
+#'
+#' @param vocab_tbl *tabular input* || **required**
+#'
+#'   The reference vocabulary table (ex: the OMOP `concept` table). This
+#'   table should minimally contain the provided `vocab_col`, `concept_name`,
+#'   and `vocabulary_id`
+#'
+#' @param col *string* || **required**
+#'
+#'   The name of the column in `tbl` that should be used in the `by` statement
+#'   to join to the `vocab_col` in the vocabulary table
+#'
+#' @param vocab_col *string* || defaults to `concept_id`
+#'
+#'   The name of the column in `vocab_tbl` that should be used in the `by` statement
+#'   to join to the `col` in the provided data table
+#'
+#' @return
+#'   This function will return the dataframe provided in `tbl` with the
+#'   addition of the `concept_name` associated with each concept
 #'
 #' @examples
 #' \dontrun{
@@ -50,21 +65,27 @@ join_to_vocabulary <- function(tbl,
 }
 
 
-#' Generate Parameter Summary
+#' Generate output_function identifier & build output instructions
 #'
 #' This function will summarize the input parameters for the *_process functions, which is
 #' then used to output a string to the console that indicates the appropriate
 #' `output_function` to use in the *_output step
 #'
-#' @param check_string abbreviation to represent check type, should be the same as what
-#'                     is prefixed to the names of the output functions
-#' @param ... all of the parameters input into the core function. any argument that is not
-#'            able to be vectorized (i.e. a CDM tbl, codeset, etc) will not appear in the final
-#'            summary
+#' @param check_string *string* || **required**
 #'
-#' @return a vector with information about which parameters will be required to use
-#'         the *_output function for each module; intended to be fed into a cli message
-#'         command to generate a console message
+#'   A string abbreviation to represent the module (ex: evp, pf). This will be
+#'   what is prefixed to the names of the output functions
+#'
+#' @param ...
+#'   All of the parameters input into the primary *_process function. Any argument
+#'   that is not able to be vectorized (i.e. a CDM tbl, codeset, etc) will
+#'   not appear in the final summary
+#'
+#' @return
+#'   A string with the name of the output_function that will be added to the final
+#'   result table, and avector with information about which parameters will be
+#'   required to use the *_output function for each module. This vector is intended
+#'   to be fed into a cli message command to generate a console message.
 #'
 #' @examples
 #' # intended for use inside the *_process functions
@@ -123,23 +144,41 @@ param_summ <- function(check_string, ...){
 }
 
 
-#' Create Concept Reference Table
+#' Create a summary concept reference table
 #'
 #' For several SQUBA modules, this function is used to create a summary reference
 #' table that displays a more detailed breakdown of concept usage
 #'
-#' @param tbl intermediate table generated in the output function that contains the concepts
-#'            of interest to be displayed in the reference table
-#' @param id_col the name of the column with the concept that needs to be summarised in the
-#'               reference table
-#' @param name_col the name of the column with the concept name associated with the concept in
-#'                 `id_col`
-#' @param denom the denominator count associated with @id_col to be displayed in the
-#'              reference table
-#' @param time logical to define whether @tbl has over time output or not
+#' @param tbl *tabular input* || **required**
 #'
-#' @return a reference table with summary information about the codes in the output that
-#'         could not be displayed in the associated graph
+#'   A table, typically generated within an *_output function, that contains the concepts
+#'   of interest to be displayed in the reference table
+#'
+#' @param id_col *string* || **required**
+#'
+#'   The name of the column with the concepts to be summarized in the
+#'   reference table
+#'
+#' @param name_col *string* || **required**
+#'
+#'   The name of the column with the concept name associated with the concept in
+#'   `id_col`
+#'
+#' @param denom *string* || **required**
+#'
+#'   The name of the column with a denominator count (or any numerical value)
+#'   associated with `id_col` to be displayed in the reference table
+#'
+#' @param time *boolean* || defaults to `FALSE`
+#'
+#'   A boolean indicating whether the input data is stratified by time. For over time
+#'   analyses, the provided denom column will be summed across the entire time period
+#'   and an all-time value will be displayed.
+#'
+#' @return
+#'   A gt reference table with summary information about the concepts included
+#'   in the provided table. This is typically included as a complement to other
+#'   graphical output.
 #'
 #' @examples
 #' # generate reference table for non-time dependent concept summary
@@ -229,16 +268,21 @@ generate_ref_table <- function(tbl,
 }
 
 
-#' Create Interactive Graphical Output
+#' Make `squba` outputs interactive
 #'
 #' This function converts a ggplot object output by any of the *_output functions
 #' into an interactive ggiraph or plotly object.
 #'
-#' @param ggplot_obj a ggplot object output by any of the `*_output` functions native
-#'                   to each module
+#' @param ggplot_obj *ggplot* || **required**
 #'
-#' @return the same graph with interactive functionality and pre-set tooltips
-#'         based either in the `ggiraph` package or the `plotly` package
+#'   A ggplot object output by any of the `*_output` functions native
+#'   to each module. This will only work with graphs generated by `squba`,
+#'   as it adds some additional metadata to each plot that is required for
+#'   this function to work.
+#'
+#' @return
+#'   The same graph with interactive functionality and pre-set tooltips
+#'   based either in the `ggiraph` package or the `plotly` package
 #'
 #' @importFrom ggiraph girafe
 #' @importFrom plotly ggplotly

@@ -7,6 +7,7 @@
 #'
 #' @return `cohort_tbl` with the age at cohort entry and age group for each patient
 #'
+#' @keywords internal
 #'
 compute_age_groups_omop <- function(cohort_tbl,
                                     person_tbl,
@@ -43,6 +44,7 @@ compute_age_groups_omop <- function(cohort_tbl,
 #'
 #' @return `cohort_tbl` with the age at cohort entry and age group for each patient
 #'
+#' @keywords internal
 #'
 compute_age_groups_pcnt <- function(cohort_tbl,
                                     person_tbl,
@@ -71,72 +73,44 @@ compute_age_groups_pcnt <- function(cohort_tbl,
 }
 
 
-# cohort_codeset_label_pcnt <- function(cohort_tbl,
-#                                       codeset_meta){
-#
-#   codeset <- load_codeset(codeset_meta$file_name)
-#
-#   filter_tbl <- select(cdm_tbl('encounter'), patid, encounterid, providerid, facilityid) %>%
-#     left_join(cdm_tbl(codeset_meta$table)) %>%
-#     rename('concept_id' = codeset_meta$column) %>%
-#     inner_join(codeset, by = 'concept_id') %>%
-#     select(person_id, flag) %>%
-#     distinct() %>%
-#     right_join(cohort_tbl, by = 'person_id') %>%
-#     mutate(flag = case_when(is.na(flag) ~ 'None',
-#                             TRUE ~ flag))
-#
-#
-# }
-
-
-# cohort_codeset_label_omop <- function(cohort_tbl,
-#                                       codeset_meta){
-#
-#   codeset <- load_codeset(codeset_meta$file_name)
-#
-#   filter_tbl <- select(cdm_tbl('visit_occurrence'), person_id, visit_occurrence_id, provider_id, care_site_id) %>%
-#     left_join(cdm_tbl(codeset_meta$table)) %>%
-#     rename('concept_id' = codeset_meta$column) %>%
-#     inner_join(codeset, by = 'concept_id') %>%
-#     select(person_id, flag) %>%
-#     distinct() %>%
-#     right_join(cohort_tbl, by = 'person_id') %>%
-#     mutate(flag = case_when(is.na(flag) ~ 'None',
-#                             TRUE ~ flag))
-#
-#
-# }
-
-
 #' Prepare Cohort
 #'
 #' For the cohort table input into any of the *_process functions, this function
 #' will prepare that cohort for the rest of the analysis. This includes computing
 #' follow-up based on start and end dates and computing age at cohort entry categorized
-#' into user-provided groups. Note that the cohort table must have columns:
-#' `site`, `person_id`, `start_date`, `end_date`
+#' into user-provided groups.
 #'
-#' @param cohort_tbl table with required fields for each member of the cohort
-#' @param age_groups option to read in a table with age group designations to allow for stratification
-#'                   by age group in output. defaults to `NULL`.
-#' @param codeset option to read in a table with codeset metadata to allow for labelling of
-#'                cohort members based on a user-provided codeset. the codeset itself should be
-#'                a table with at least a `concept_id` column and a `flag` column with user-provided
-#'                labels.
-#' @param omop_or_pcornet string indicating the appropriate backend CDM (`omop` or `pcornet`)
+#' @param cohort_tbl *tabular input* || **required**
 #'
+#'   The cohort to be used for data quality testing. This table should contain,
+#'   at minimum:
 #'
-#' @return a tbl with person_id and the following:
-#'          `start_date` the cohort entry date
-#'          `end_date` the last visit
-#'          `fu`: length of follow up
-#'          `site` : patient site
-#'        if age_groups is not NULL:
-#'          `age_ce`: patient age at cohort entry
-#'          `age_grp`: user-provided age grouping
-#'        if codeset is not NULL:
-#'          `flag`: flag that indiciates patient is a member of a user-specified group in the codeset
+#'   - `site` | *character* | the name(s) of institutions included in your cohort
+#'   - `person_id` / `patid` | *integer / character* | the patient identifier
+#'   - `start_date` | *date* | the start of the cohort period
+#'   - `end_date` | *date* | the end of the cohort period
+#'
+#' @param age_groups *tabular input* || defaults to `NULL`
+#'
+#'   If you would like to stratify the results by age group, create a table or
+#'   CSV file with the following columns and use it as input to this parameter:
+#'
+#'   - `min_age` | *integer* | the minimum age for the group (i.e. 10)
+#'   - `max_age` | *integer* | the maximum age for the group (i.e. 20)
+#'   - `group` | *character* | a string label for the group (i.e. 10-20, Young Adult, etc.)
+#'
+#'   If you would *not* like to stratify by age group, leave as `NULL`
+#'
+#' @param omop_or_pcornet *string* || **required**
+#'
+#'   A string, either `omop` or `pcornet`, indicating the CDM format of the data
+#'
+#' @return
+#'   This function will return the same input cohort table with the addition of
+#'   the column `fu`, which includes the length of patient follow-up based on the
+#'   provided start & end dates. Optionally, if age_groups is not NULL, the output
+#'   will also include `age_ce` (patient age at cohort entry) and `age_grp`
+#'   (the user-provided age group category)
 #'
 #' @examples
 #' \dontrun{
@@ -162,7 +136,6 @@ compute_age_groups_pcnt <- function(cohort_tbl,
 #'
 prepare_cohort <- function(cohort_tbl,
                            age_groups = NULL,
-                           codeset = NULL,
                            omop_or_pcornet) {
 
 
@@ -193,21 +166,8 @@ prepare_cohort <- function(cohort_tbl,
 
     }
 
-  # if(!is.data.frame(codeset)){
-  #   final_cdst <- stnd
-  # }else{
-  #   if(omop_or_pcornet == 'omop'){
-  #   final_cdst <- cohort_codeset_label_omop(cohort_tbl = stnd,
-  #                                           codeset_meta = codeset)
-  #   }else if(omop_or_pcornet == 'pcornet'){
-  #     final_cdst <- cohort_codeset_label_pcnt(cohort_tbl = stnd,
-  #                                             codeset_meta = codeset)
-  #   }
-  # }
-
   final <- stnd %>%
-    left_join(final_age) #%>%
-    #left_join(final_cdst)
+    left_join(final_age)
 
   return(final)
 
@@ -217,15 +177,22 @@ prepare_cohort <- function(cohort_tbl,
 #' Build birth_date Column
 #'
 #' This function, which is specific to the OMOP CDM implementation, will create
-#' an aggregate birth_date column using year_of_birth, month_of_birth, and
-#' day_of_birth
+#' an aggregate birth_date column using `year_of_birth`, `month_of_birth`, and
+#' `day_of_birth`
 #'
-#' @param cohort table with cohort members; must at least have person_id
-#' @param person_tbl CDM person table; must at least have person_id, year_of_birth,
-#' month_of_birth, and day_of_birth
+#' @param cohort *tabular input* || **required**
 #'
-#' @return a table with a new birth_date column that is a combination of year, month, and
-#' day of birth; improves ability to compute ages
+#'   A table with cohort members, which contains at least a `person_id` column
+#'
+#' @param person_tbl *tabular input* || **required**
+#'
+#'   The CDM `person` table or another table that contains at least `person_id`,
+#'   `year_of_birth`, `month_of_birth`, and `day_of_birth`
+#'
+#' @return
+#'   This function will return a table with a new birth_date column that is a
+#'   combination of year, month, and day of birth. This is intended to facilitate
+#'   computations using date of birth, like computing age.
 #'
 #' @examples
 #' \dontrun{
@@ -272,6 +239,8 @@ build_birth_date <- function(cohort,
 #'
 #' @return an integer representing the difference (in days) between the two provided
 #' dates
+#'
+#' @keywords internal
 #'
 calc_days_between_dates <-
   function(date_col_1, date_col_2, db = get_argos_default()$config("db_src")) {
