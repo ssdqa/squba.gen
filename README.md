@@ -1,6 +1,6 @@
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# squba.gen
+# Support Functions for the `squba` Ecosystem
 
 <!-- badges: start -->
 

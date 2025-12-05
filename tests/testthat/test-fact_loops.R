@@ -1,7 +1,8 @@
 
-library(patientfacts)
 
 test_that('loop through visits omop', {
+
+  skip_if_not_installed('patientfacts')
 
   mock_function <- function(cohort,
                             input_tbl){
@@ -90,6 +91,8 @@ test_that('loop through visits omop', {
 
 
 test_that('loop through visits pcornet', {
+
+  skip_if_not_installed('patientfacts')
 
   mock_function <- function(cohort,
                             input_tbl){
