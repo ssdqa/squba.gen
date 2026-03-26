@@ -186,8 +186,8 @@ initialize_dq_session <- function(session_name,
   ## Drop path to working directory if present
   specs_drop_wd <- stringr::str_remove(file_subdirectory, working_directory)
   results_drop_wd <- stringr::str_remove(results_subdirectory, working_directory)
-  get_argos_default()$config('subdirs', list(spec_dir = specs_drop_wd,
-                                             result_dir = results_drop_wd))
+  get_argos_default()$config('subdirs', list(specs = specs_drop_wd,
+                                             results = results_drop_wd))
 
   # Print session information
   db_str <- DBI::dbGetInfo(config('db_src'))
