@@ -43,7 +43,7 @@ param_summ(check_string = 'evp',
            multi_or_single_site = 'single',
            anomaly_or_exploratory = 'exploratory',
            time = FALSE)
-#> Rows: 77 Columns: 5
+#> Rows: 85 Columns: 5
 #> ── Column specification ────────────────────────────────────────────────────────
 #> Delimiter: ","
 #> chr (5): module, check, Always Required, Required for Check, Optional
