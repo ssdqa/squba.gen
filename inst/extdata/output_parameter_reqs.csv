@@ -76,3 +76,11 @@ cvd,ms_exp_la,process_output,,vocab_tbl
 cvd,ss_anom_la,process_output,filter_concept,vocab_tbl
 cvd,ms_anom_cs,process_output,,vocab_tbl
 cvd,ms_anom_la,process_output,filter_concept,vocab_tbl
+uc,ss_exp_cs,process_output,output_col,
+uc,ss_anom_cs,process_output,output_col,
+uc,ss_exp_la,process_output,output_col,
+uc,ss_anom_la,process_output,"output_col, filter_variable",
+uc,ms_exp_cs,process_output,"output_col, filter_variable",
+uc,ms_anom_cs,process_output,output_col,
+uc,ms_exp_la,process_output,"output_col, filter_variable",
+uc,ms_anom_la,process_output,filter_variable,
