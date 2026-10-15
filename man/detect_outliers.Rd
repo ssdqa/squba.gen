@@ -45,7 +45,7 @@ The name of the column that indicates eligibility for analysis}
 }
 \description{
 This function will identify anomalies in a dataframe using the
-\code{\link[hotspots:hotspots]{hotspots::outliers()}} function. It assumes:
+\code{\link[hotspots:outliers]{hotspots::outliers()}} function. It assumes:
 (1) No time component;
 (2) Table has a column indicating whether a particular group or row is eligible for analysis;
 (3) numerical variable exists that should be used for anomaly detection analysis

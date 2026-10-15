@@ -20,7 +20,7 @@ A boolean indicating whether the fill aesthetic is discrete or not}
 A boolean indicating whether the palette should be reversed}
 
 \item{...}{Any additional arguments passed to \link[ggplot2:discrete_scale]{ggplot2::discrete_scale} or
-\link[ggplot2:scale_gradient]{ggplot2::scale_fill_gradientn}, used respectively when
+\link[ggplot2:scale_fill_gradientn]{ggplot2::scale_fill_gradientn}, used respectively when
 discrete is TRUE or FALSE}
 }
 \description{
