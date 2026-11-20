@@ -7,7 +7,3 @@ SQUBA Standard Color Palettes
 ``` r
 squba_palettes_standard
 ```
-
-## Format
-
-An object of class `list` of length 6.

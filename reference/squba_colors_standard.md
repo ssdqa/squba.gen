@@ -7,7 +7,3 @@ SQUBA Standard Color Hexes
 ``` r
 squba_colors_standard
 ```
-
-## Format
-
-An object of class `character` of length 13.

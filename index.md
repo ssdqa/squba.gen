@@ -13,5 +13,6 @@ criteria.
 You can install the development version of squba.gen like so:
 
 ``` r
+
 devtools::install_github('ssdqa/squba.gen')
 ```

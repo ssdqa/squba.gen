@@ -33,8 +33,9 @@ scale_color_squba(palette = "main", discrete = TRUE, reverse = FALSE, ...)
 
   Any additional arguments passed to
   [ggplot2::discrete_scale](https://ggplot2.tidyverse.org/reference/discrete_scale.html)
-  or ggplot2::scale_color_gradientn, used respectively when discrete is
-  TRUE or FALSE
+  or
+  [ggplot2::scale_color_gradientn](https://ggplot2.tidyverse.org/reference/scale_gradient.html),
+  used respectively when discrete is TRUE or FALSE
 
 ## Examples
 
