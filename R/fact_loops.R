@@ -237,8 +237,7 @@ loop_through_visits_pcnt <- function(cohort_tbl,
         filter(enc_type %in% c(visit_types)) %>%
         filter(admit_date >= start_date,
                admit_date <= end_date) %>%
-        compute_new(temporary=TRUE,
-                    indexes=list('patid'))
+        compute_new()
 
       if(time){visits <- visits %>% filter(admit_date >= time_start,
                                            admit_date <= time_end)}
